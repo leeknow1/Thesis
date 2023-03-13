@@ -1,7 +1,7 @@
 package com.miras.cclearner.service;
 
-import com.miras.cclearner.entity.FeedbackEntity;
-import com.miras.cclearner.repository.FeedbackEntityRepository;
+import com.miras.cclearner.entity.Feedback;
+import com.miras.cclearner.repository.FeedbackRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,21 +22,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FeedbackService {
 
-    private final FeedbackEntityRepository feedbackRepository;
+    private final FeedbackRepository feedbackRepository;
 
     public String feedbackMain(@RequestParam(required = false, defaultValue = "1") int page, Model model) {
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "id"));
-        Page<FeedbackEntity> feedbacks = feedbackRepository.findAll(pageable);
+        Page<Feedback> feedbacks = feedbackRepository.findAll(pageable);
         model.addAttribute("feedbacks", feedbacks.getContent());
 
         return "feedback";
     }
 
-    public String addFeedback(@ModelAttribute("feedback") FeedbackEntity feedback) {
+    public String addFeedback(@ModelAttribute("feedback") Feedback feedback) {
         return "createFeedback";
     }
 
-    public String addFeedback(@ModelAttribute("feedback") FeedbackEntity feedback, Principal principal) {
+    public String addFeedback(@ModelAttribute("feedback") Feedback feedback, Principal principal) {
         controlFeedbacks();
         feedback.setUsername(principal.getName());
         feedback.setCreatedDate(new Timestamp(System.currentTimeMillis()));
@@ -44,20 +44,20 @@ public class FeedbackService {
         return "redirect:/api/feedback";
     }
 
-    public String replyToFeedback(@ModelAttribute("feedback") FeedbackEntity feedback,
+    public String replyToFeedback(@ModelAttribute("feedback") Feedback feedback,
                                   @PathVariable Long id,
                                   Model model) {
-        FeedbackEntity reply = feedbackRepository.findById(id).get();
+        Feedback reply = feedbackRepository.findById(id).get();
         model.addAttribute("username", reply.getUsername());
         model.addAttribute("replyMessage", reply.getMessage());
         return "replyToFeedback";
     }
 
-    public String replyToFeedback(@ModelAttribute("feedback") FeedbackEntity feedback,
+    public String replyToFeedback(@ModelAttribute("feedback") Feedback feedback,
                                   @PathVariable Long id,
                                   Principal principal) {
         controlFeedbacks();
-        FeedbackEntity newFeedback = new FeedbackEntity();
+        Feedback newFeedback = new Feedback();
         newFeedback.setUsername(principal.getName());
         newFeedback.setCreatedDate(new Timestamp(System.currentTimeMillis()));
         String message = "@" + feedbackRepository.findById(id).get().getUsername() + ", " + feedback.getMessage();
@@ -80,7 +80,7 @@ public class FeedbackService {
     }
 
     private void controlFeedbacks() {
-        List<FeedbackEntity> feedbacks = feedbackRepository.findAll(Sort.by("id"));
+        List<Feedback> feedbacks = feedbackRepository.findAll(Sort.by("id"));
         if (feedbacks.size() == 50)
             feedbackRepository.deleteById(feedbacks.get(0).getId());
     }

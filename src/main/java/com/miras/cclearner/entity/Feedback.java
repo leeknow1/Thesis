@@ -6,27 +6,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Timestamp;
+
 @Entity
-@Table(name = "likes")
+@Table(name = "feedback")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LikesEntity {
+public class Feedback {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "username")
+    private String username;
 
-    @Column(name = "char_id")
-    private Long charId;
+    @Column(name = "message")
+    private String message;
 
-    @Column(name = "is_liked", nullable = false)
-    private boolean isLiked;
+    @Column(name = "created")
+    private Timestamp createdDate;
 
-    @Column(name = "is_disliked", nullable = false)
-    private boolean isDisliked;
 }

@@ -2,7 +2,7 @@ package com.miras.cclearner.controller;
 
 
 import com.miras.cclearner.dto.UserDTO;
-import com.miras.cclearner.entity.CategoryEntity;
+import com.miras.cclearner.entity.Category;
 import com.miras.cclearner.service.CategoryService;
 import com.miras.cclearner.service.CharacterService;
 import com.miras.cclearner.service.HomePageService;
@@ -24,22 +24,23 @@ public class HomeController {
     private final CharacterService characterService;
 
     @GetMapping("/home")
-    public String getCategories(Model model) {
-        return categoryService.getCategories(model);
+    public String getCategories(@RequestParam(required = false, defaultValue = "", value = "name") String name, Model model) {
+        return categoryService.getCategories(name, model);
     }
 
     @GetMapping("/category/user/{category}")
-    public String getCharactersByCategory(@PathVariable(name = "category") Long id, Model model) {
+    public String getCharactersByCategory(@PathVariable(name = "category") Long id,
+                                          Model model) {
         return characterService.getCharactersByCategory(id, model);
     }
 
     @GetMapping("/category/admin/add")
-    public String addCategory(@ModelAttribute("category") CategoryEntity category) {
+    public String addCategory(@ModelAttribute("category") Category category) {
         return categoryService.addCharCategory(category);
     }
 
     @PostMapping("/category/admin/add")
-    public String addCategory(@ModelAttribute("category") CategoryEntity category, @RequestParam("img") MultipartFile img, BindingResult bindingResult, Model model) {
+    public String addCategory(@ModelAttribute("category") Category category, @RequestParam("img") MultipartFile img, BindingResult bindingResult, Model model) {
         return categoryService.addCharCategory(category, img, bindingResult, model);
     }
 
@@ -49,7 +50,7 @@ public class HomeController {
     }
 
     @PostMapping("/category/admin/edit/{category}")
-    public String editCategory(@PathVariable(name = "category") Long cateId, @ModelAttribute("categoryObj") CategoryEntity category, @RequestParam("img") MultipartFile img, BindingResult bindingResult, Model model) {
+    public String editCategory(@PathVariable(name = "category") Long cateId, @ModelAttribute("categoryObj") Category category, @RequestParam("img") MultipartFile img, BindingResult bindingResult, Model model) {
         return categoryService.editCharCategory(cateId, category, img, bindingResult, model);
     }
 

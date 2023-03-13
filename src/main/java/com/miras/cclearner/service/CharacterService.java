@@ -2,11 +2,11 @@ package com.miras.cclearner.service;
 
 import com.miras.cclearner.common.CustomValidator;
 import com.miras.cclearner.common.FilePathUtils;
-import com.miras.cclearner.entity.CategoryEntity;
-import com.miras.cclearner.entity.CharactersEntity;
-import com.miras.cclearner.repository.CategoryEntityRepository;
-import com.miras.cclearner.repository.CharacterEntityRepository;
+import com.miras.cclearner.entity.Character;
+import com.miras.cclearner.repository.CategoryRepository;
+import com.miras.cclearner.repository.CharacterRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,14 +30,15 @@ import static com.miras.cclearner.service.ServiceUtils.getFormattedDate;
 @RequiredArgsConstructor
 public class CharacterService {
 
-    private final CharacterEntityRepository charRepository;
-    private final CategoryEntityRepository categoryRepository;
+    private final CharacterRepository charRepository;
     private final FilePathUtils filePathUtils;
     private final CustomValidator customValidator;
+    private final CharacterRequestService requestService;
+    private final CategoryRepository categoryRepository;
 
-    public String getCharactersByCategory(@PathVariable(name = "category") Long id, Model model) {
-        List<CharactersEntity> characters = charRepository.findAllByCategory(id);
-
+    public String getCharactersByCategory(@PathVariable(name = "category") Long id,
+                                          Model model) {
+        List<Character> characters = charRepository.findAllByCategory(id);
         model.addAttribute("character", characters);
 
         if (characters.size() != 0)
@@ -51,7 +52,7 @@ public class CharacterService {
     }
 
     public String getOneCharacter(@PathVariable(name = "id") Long charId, Model model) {
-        CharactersEntity character = charRepository.findById(charId).get();
+        Character character = charRepository.findById(charId).orElseThrow();
 
         model.addAttribute("character", character);
         model.addAttribute("videoPath", filePathUtils.getCharVidPath(character.getName()));
@@ -64,11 +65,12 @@ public class CharacterService {
         return "oneChar";
     }
 
-    public String addCharacter(@ModelAttribute("character") CharactersEntity character) {
+    public String addCharacter(@ModelAttribute("character") Character character, Model model) {
+        model.addAttribute("categories", categoryRepository.findAll(Sort.by("id")));
         return "createChar";
     }
 
-    public String addCharacter(@ModelAttribute("character") CharactersEntity character,
+    public String addCharacter(@ModelAttribute("character") Character character,
                                @RequestParam(value = "img") MultipartFile img,
                                @RequestParam(value = "aud") MultipartFile aud,
                                @RequestParam(value = "vid") MultipartFile vid,
@@ -78,12 +80,12 @@ public class CharacterService {
     ) {
 
         if (bindingResult.hasErrors()) {
-            return addCharacter(character);
+            return addCharacter(character, model);
         }
 
         if (customValidator.checkName(character.getName())) {
             model.addAttribute("isNameInvalid", true);
-            return addCharacter(character);
+            return addCharacter(character, model);
         }
 
         Path path = Paths.get(filePathUtils.getCharAbsPath() + "/" + character.getName());
@@ -124,12 +126,13 @@ public class CharacterService {
 
     public String editCharacter(@PathVariable(name = "id") Long charId,
                                 Model model) {
-        model.addAttribute("character", charRepository.findById(charId).get());
+        model.addAttribute("character", charRepository.findById(charId).orElseThrow());
+        model.addAttribute("categories", categoryRepository.findAll(Sort.by("id")));
         return "editChar";
     }
 
     public String editCharacter(@PathVariable(name = "id") Long charId,
-                                @ModelAttribute("character") CharactersEntity character,
+                                @ModelAttribute("character") Character character,
                                 @RequestParam(value = "img") MultipartFile img,
                                 @RequestParam(value = "aud") MultipartFile aud,
                                 @RequestParam(value = "vid") MultipartFile vid,
@@ -141,13 +144,16 @@ public class CharacterService {
             return editCharacter(charId, model);
         }
 
-        CharactersEntity changingChar = charRepository.findById(charId).get();
+        Character changingChar = charRepository.findById(charId).orElseThrow();
+        character.setStatus(changingChar.getStatus());
+        character.setImageName(changingChar.getImageName());
+        character.setAudioName(changingChar.getAudioName());
+        character.setVideoName(changingChar.getVideoName());
 
         if (!changingChar.getName().equals(character.getName())) {
             File oldDirName = new File(filePathUtils.getCharAbsPath(changingChar.getName()));
             File newDirName = new File(filePathUtils.getCharAbsPath(character.getName()));
             oldDirName.renameTo(newDirName);
-            changingChar.setName(character.getName());
         }
 
         try {
@@ -155,35 +161,33 @@ public class CharacterService {
                 Path path = Paths.get(filePathUtils.getCharImgAbsPath(changingChar.getName() + "/" + changingChar.getImageName()));
                 Files.delete(path);
                 img.transferTo(new File(filePathUtils.getCharImgAbsPath(changingChar.getName()) + "/" + img.getOriginalFilename()));
-                changingChar.setImageName(img.getOriginalFilename());
+                character.setImageName(img.getOriginalFilename());
             }
             if (!aud.isEmpty()) {
                 Path path = Paths.get(filePathUtils.getCharAudAbsPath(changingChar.getName()) + "/" + changingChar.getAudioName());
                 Files.delete(path);
                 aud.transferTo(new File(filePathUtils.getCharAudAbsPath(changingChar.getName()) + "/" + aud.getOriginalFilename()));
-                changingChar.setAudioName(aud.getOriginalFilename());
+                character.setAudioName(aud.getOriginalFilename());
             }
             if (!vid.isEmpty()) {
                 Path path = Paths.get(filePathUtils.getCharVidAbsPath(changingChar.getName()) + "/" + changingChar.getVideoName());
                 Files.delete(path);
                 vid.transferTo(new File(filePathUtils.getCharVidAbsPath(changingChar.getName()) + "/" + vid.getOriginalFilename()));
-                changingChar.setVideoName(vid.getOriginalFilename());
+                character.setVideoName(vid.getOriginalFilename());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        changingChar.setDescription(character.getDescription());
-        changingChar.setExample(character.getExample());
-        changingChar.setAuthor(principal.getName());
-        changingChar.setUpdatedDate(getFormattedDate());
-        charRepository.save(changingChar);
+        character.setAuthor(principal.getName());
+        character.setUpdatedDate(getFormattedDate());
+        charRepository.save(character);
 
         return "redirect:/api/home";
     }
 
     public String deleteCharacter(@PathVariable(name = "id") Long charId) {
-        CharactersEntity character = charRepository.findById(charId).get();
+        Character character = charRepository.findById(charId).orElseThrow();
 
         Path path = Paths.get(filePathUtils.getCharAbsPath(character.getName()));
         Path pathImg = Paths.get(filePathUtils.getCharImgAbsPath(character.getName()) + "/" + character.getImageName());
@@ -194,19 +198,18 @@ public class CharacterService {
             Files.delete(pathImg);
             Files.delete(pathAud);
             Files.delete(pathVid);
-            Files.delete(path);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-//        deleteAllCharRequests(charId);
+        deleteAllCharRequests(charId);
         charRepository.deleteById(charId);
         return "redirect:/api/home";
     }
 
     void deleteAllCharRequests(Long id) {
-//        for(CharactersRequestEntity request : charRequestRepository.findAllByOriginalId(id)){
-//            requestService.requestDisapproved(request.getCategoryId(), request.getId());
-//        }
+        for(Character request : charRepository.findAllByOriginalId(id)){
+            requestService.requestDisapproved(request.getId());
+        }
     }
 }

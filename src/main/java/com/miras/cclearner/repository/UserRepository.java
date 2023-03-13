@@ -1,13 +1,13 @@
 package com.miras.cclearner.repository;
 
-import com.miras.cclearner.entity.UserEntity;
+import com.miras.cclearner.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
+public interface UserRepository extends JpaRepository<Users, Long> {
 
-    UserEntity findByUsername(String username);
+    Users findByUsername(String username);
 
     boolean existsByUsername(String username);
 }

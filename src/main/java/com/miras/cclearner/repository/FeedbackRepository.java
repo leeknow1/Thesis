@@ -1,6 +1,6 @@
 package com.miras.cclearner.repository;
 
-import com.miras.cclearner.entity.FeedbackEntity;
+import com.miras.cclearner.entity.Feedback;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Repository;
 import java.util.Calendar;
 
 @Repository
-public interface FeedbackEntityRepository extends JpaRepository<FeedbackEntity, Long> {
+public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
 
     @Modifying
-    @Query("delete from FeedbackEntity f where f.createdDate < :date")
+    @Query("delete from Feedback f where f.createdDate < :date")
     void deleteBy7Days(@Param("date") Calendar calendar);
 }

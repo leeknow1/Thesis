@@ -1,6 +1,6 @@
 package com.miras.cclearner.controller;
 
-import com.miras.cclearner.entity.CharactersEntity;
+import com.miras.cclearner.entity.Character;
 import com.miras.cclearner.service.CharacterRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -39,12 +39,12 @@ public class CharacterRequestController {
     }
 
     @GetMapping("/adult/request/add")
-    public String requestAddCharacter(@ModelAttribute("character") CharactersEntity character) {
+    public String requestAddCharacter(@ModelAttribute("character") Character character) {
         return service.requestAddCharacter(character);
     }
 
     @PostMapping("/adult/request/add")
-    public String requestAddCharacter(@ModelAttribute("character") CharactersEntity character, @RequestParam(value = "img") MultipartFile img, @RequestParam(value = "aud") MultipartFile aud, @RequestParam(value = "vid") MultipartFile vid, BindingResult bindingResult, Model model, Principal principal) {
+    public String requestAddCharacter(@ModelAttribute("character") Character character, @RequestParam(value = "img") MultipartFile img, @RequestParam(value = "aud") MultipartFile aud, @RequestParam(value = "vid") MultipartFile vid, BindingResult bindingResult, Model model, Principal principal) {
         return service.requestAddCharacter(character, img, aud, vid, bindingResult, model, principal);
     }
 
@@ -54,7 +54,7 @@ public class CharacterRequestController {
     }
 
     @PostMapping("/adult/request/edit/{id}")
-    public String requestEditCharacter(@PathVariable(name = "id") Long charId, @ModelAttribute("character") CharactersEntity character, @RequestParam(value = "img") MultipartFile img, @RequestParam(value = "aud") MultipartFile aud, @RequestParam(value = "vid") MultipartFile vid, BindingResult bindingResult, Model model, Principal principal) {
+    public String requestEditCharacter(@PathVariable(name = "id") Long charId, @ModelAttribute("character") Character character, @RequestParam(value = "img") MultipartFile img, @RequestParam(value = "aud") MultipartFile aud, @RequestParam(value = "vid") MultipartFile vid, BindingResult bindingResult, Model model, Principal principal) {
         return service.requestEditCharacter(charId, character, img, aud, vid, bindingResult, model, principal);
     }
 

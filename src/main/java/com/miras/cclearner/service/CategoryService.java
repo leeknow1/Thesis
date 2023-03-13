@@ -2,8 +2,10 @@ package com.miras.cclearner.service;
 
 import com.miras.cclearner.common.CustomValidator;
 import com.miras.cclearner.common.FilePathUtils;
-import com.miras.cclearner.entity.CategoryEntity;
-import com.miras.cclearner.repository.CategoryEntityRepository;
+import com.miras.cclearner.entity.Category;
+import com.miras.cclearner.entity.Character;
+import com.miras.cclearner.repository.CategoryRepository;
+import com.miras.cclearner.repository.CharacterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.miras.cclearner.CclearnerApplication.passedOneHour;
@@ -27,16 +30,30 @@ import static com.miras.cclearner.CclearnerApplication.passedOneHour;
 @RequiredArgsConstructor
 public class CategoryService {
 
-    private final CategoryEntityRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
     private final FilePathUtils filePathUtils;
 
     private final CustomValidator customValidator;
 
-    public String getCategories(Model model) {
-        List<CategoryEntity> categories = categoryRepository.findAll(Sort.by("id"));
+    private final CharacterRepository characterRepository;
+
+    public String getCategories(String name, Model model) {
+        List<Category> categories = new ArrayList<>();
+        List<Character> characters = new ArrayList<>();
+
+        if(name.isBlank()) {
+            categories = categoryRepository.findAll(Sort.by("id"));
+            model.addAttribute("path", filePathUtils.getCategoryPath());
+        } else {
+            name = "%" + name + "%";
+            characters =  characterRepository.findAllByName(name);
+            if (characters.size() != 0)
+                model.addAttribute("path", filePathUtils.getCharPath());
+        }
+
         model.addAttribute("category", categories);
-        model.addAttribute("path", filePathUtils.getCategoryPath());
+        model.addAttribute("character", characters);
 
         if (passedOneHour()) {
             model.addAttribute("passedHour", true);
@@ -45,11 +62,11 @@ public class CategoryService {
         return "categoryChar";
     }
 
-    public String addCharCategory(@ModelAttribute("category") CategoryEntity category) {
+    public String addCharCategory(@ModelAttribute("category") Category category) {
         return "createCharCategory";
     }
 
-    public String addCharCategory(@ModelAttribute("category") CategoryEntity category, @RequestParam("img") MultipartFile img, BindingResult bindingResult, Model model) {
+    public String addCharCategory(@ModelAttribute("category") Category category, @RequestParam("img") MultipartFile img, BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
             return addCharCategory(category);
@@ -82,12 +99,12 @@ public class CategoryService {
         return "editCharCategory";
     }
 
-    public String editCharCategory(@PathVariable(name = "category") Long cateId, @ModelAttribute("categoryObj") CategoryEntity category, @RequestParam("img") MultipartFile img, BindingResult bindingResult, Model model) {
+    public String editCharCategory(@PathVariable(name = "category") Long cateId, @ModelAttribute("categoryObj") Category category, @RequestParam("img") MultipartFile img, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return editCharCategory(cateId, model);
         }
 
-        CategoryEntity changingCategory = categoryRepository.findById(cateId).get();
+        Category changingCategory = categoryRepository.findById(cateId).get();
 
         if (!changingCategory.getName().equals(category.getName())) {
             File oldDirName = new File(filePathUtils.getCategoryAbsPath(changingCategory.getName()));
@@ -114,7 +131,7 @@ public class CategoryService {
     }
 
     public String deleteCategory(Long cateId) {
-        CategoryEntity category = categoryRepository.findById(cateId).get();
+        Category category = categoryRepository.findById(cateId).get();
         try{
             Path path = Paths.get(filePathUtils.getCategoryAbsPath(category.getName()));
             Path pathImg = Paths.get(filePathUtils.getCategoryAbsPath(category.getName()) + "/" + category.getImgName());

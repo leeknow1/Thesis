@@ -3,6 +3,7 @@ package com.miras.cclearner.service;
 import com.miras.cclearner.common.CustomValidator;
 import com.miras.cclearner.common.FilePathUtils;
 import com.miras.cclearner.entity.*;
+import com.miras.cclearner.entity.Character;
 import com.miras.cclearner.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,14 +30,14 @@ import static com.miras.cclearner.service.ServiceUtils.getRequestName;
 @RequiredArgsConstructor
 public class CharacterRequestService {
 
-    private final CharacterEntityRepository charRepository;
+    private final CharacterRepository charRepository;
     private final FilePathUtils filePathUtils;
-    private final UserEntityRepository userRepository;
+    private final UserRepository userRepository;
     private final CustomValidator customValidator;
-    private final LikesEntityRepository likesRepository;
+    private final LikesRepository likesRepository;
 
     public String getRequestCharacters(Model model) {
-        List<CharactersEntity> characters = charRepository.findAllModified();
+        List<Character> characters = charRepository.findAllModified();
         model.addAttribute("character", characters);
 
         if(characters.size() != 0)
@@ -46,7 +47,7 @@ public class CharacterRequestService {
     }
 
     public String getOneRequestCharacter(@PathVariable(name = "id") Long charId, Model model) {
-        CharactersEntity character = charRepository.findById(charId).orElseThrow();
+        Character character = charRepository.findById(charId).orElseThrow();
 
         String name = getRequestName(character.getName());
 
@@ -57,11 +58,11 @@ public class CharacterRequestService {
         return "request/oneRequestChar";
     }
 
-    public String requestAddCharacter(@ModelAttribute("character") CharactersEntity character) {
+    public String requestAddCharacter(@ModelAttribute("character") Character character) {
         return "request/requestAddChar";
     }
 
-    public String requestAddCharacter(@ModelAttribute("character") CharactersEntity character,
+    public String requestAddCharacter(@ModelAttribute("character") Character character,
                                       @RequestParam(value = "img") MultipartFile img,
                                       @RequestParam(value = "aud") MultipartFile aud,
                                       @RequestParam(value = "vid") MultipartFile vid,
@@ -111,9 +112,9 @@ public class CharacterRequestService {
             e.printStackTrace();
         }
 
-        UserEntity user = userRepository.findByUsername(principal.getName());
+        Users user = userRepository.findByUsername(principal.getName());
 
-        CharactersEntity request = new CharactersEntity();
+        Character request = new Character();
         request.setName(character.getName());
         request.setDescription(character.getDescription());
         request.setExample(character.getExample());
@@ -139,7 +140,7 @@ public class CharacterRequestService {
     }
 
     public String requestEditCharacter(@PathVariable(name = "id") Long charId,
-                                       @ModelAttribute("character") CharactersEntity character,
+                                       @ModelAttribute("character") Character character,
                                        @RequestParam(value = "img") MultipartFile img,
                                        @RequestParam(value = "aud") MultipartFile aud,
                                        @RequestParam(value = "vid") MultipartFile vid,
@@ -166,10 +167,10 @@ public class CharacterRequestService {
             return requestEditCharacter(charId, model);
         }
 
-        CharactersEntity originalChar = charRepository.findById(charId).orElseThrow();
-        UserEntity user = userRepository.findByUsername(principal.getName());
+        Character originalChar = charRepository.findById(charId).orElseThrow();
+        Users user = userRepository.findByUsername(principal.getName());
 
-        CharactersEntity requestChar = new CharactersEntity();
+        Character requestChar = new Character();
         requestChar.setAuthor(user.getUsername());
         requestChar.setOriginalId(originalChar.getId());
         requestChar.setName(originalChar.getName() + " --> " + character.getName());
@@ -223,10 +224,10 @@ public class CharacterRequestService {
     }
 
     public String requestApproved(@PathVariable(name = "id") Long charId) {
-        CharactersEntity request = charRepository.findById(charId).orElseThrow();
+        Character request = charRepository.findById(charId).orElseThrow();
 
         if(request.getOriginalId() != null) {
-            CharactersEntity character = charRepository.findById(request.getOriginalId()).orElseThrow();
+            Character character = charRepository.findById(request.getOriginalId()).orElseThrow();
             try {
                 if (request.getImageName() != null) {
                     Path oldImg = Paths.get(filePathUtils.getCharImgAbsPath(character.getName()) + "/" + character.getImageName());
@@ -314,7 +315,7 @@ public class CharacterRequestService {
     }
 
     public String requestDisapproved(@PathVariable(name = "id") Long charId) {
-        CharactersEntity request = charRepository.findById(charId).orElseThrow();
+        Character request = charRepository.findById(charId).orElseThrow();
         String name = getRequestName(request.getName());
 
         try {
@@ -340,11 +341,11 @@ public class CharacterRequestService {
     }
 
     public String likeRequestCharacter(@PathVariable(name = "id") Long charId, Principal principal) {
-        CharactersEntity character = charRepository.findById(charId).orElseThrow();
-        UserEntity user = userRepository.findByUsername(principal.getName());
+        Character character = charRepository.findById(charId).orElseThrow();
+        Users user = userRepository.findByUsername(principal.getName());
 
-        LikesEntity like = likesRepository.isUserLikedChar(user.getId(), charId);
-        LikesEntity dislike = likesRepository.isUserDislikedChar(user.getId(), charId);
+        Likes like = likesRepository.isUserLikedChar(user.getId(), charId);
+        Likes dislike = likesRepository.isUserDislikedChar(user.getId(), charId);
 
         if (like == null) {
             if (dislike != null) {
@@ -353,7 +354,7 @@ public class CharacterRequestService {
             }
 
             character.setLikes(character.getLikes() + 1);
-            LikesEntity likes = new LikesEntity();
+            Likes likes = new Likes();
             likes.setUserId(user.getId());
             likes.setCharId(charId);
             likes.setLiked(true);
@@ -369,11 +370,11 @@ public class CharacterRequestService {
     }
 
     public String dislikeRequestCharacter(@PathVariable(name = "id") Long charId, Principal principal) {
-        CharactersEntity character = charRepository.findById(charId).orElseThrow();
-        UserEntity user = userRepository.findByUsername(principal.getName());
+        Character character = charRepository.findById(charId).orElseThrow();
+        Users user = userRepository.findByUsername(principal.getName());
 
-        LikesEntity like = likesRepository.isUserLikedChar(user.getId(), charId);
-        LikesEntity dislike = likesRepository.isUserDislikedChar(user.getId(), charId);
+        Likes like = likesRepository.isUserLikedChar(user.getId(), charId);
+        Likes dislike = likesRepository.isUserDislikedChar(user.getId(), charId);
 
         if (dislike == null) {
             if (like != null) {
@@ -381,7 +382,7 @@ public class CharacterRequestService {
                 likesRepository.delete(like);
             }
             character.setDislikes(character.getDislikes() + 1);
-            LikesEntity likes = new LikesEntity();
+            Likes likes = new Likes();
             likes.setUserId(user.getId());
             likes.setCharId(charId);
             likes.setDisliked(true);

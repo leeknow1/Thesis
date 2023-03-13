@@ -1,6 +1,6 @@
 package com.miras.cclearner.controller;
 
-import com.miras.cclearner.entity.FeedbackEntity;
+import com.miras.cclearner.entity.Feedback;
 import com.miras.cclearner.service.FeedbackService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -23,24 +23,24 @@ public class FeedbackController {
     }
 
     @GetMapping("/add")
-    public String addFeedback(@ModelAttribute("feedback") FeedbackEntity feedback) {
+    public String addFeedback(@ModelAttribute("feedback") Feedback feedback) {
         return service.addFeedback(feedback);
     }
 
     @PostMapping("/add")
-    public String addFeedback(@ModelAttribute("feedback") FeedbackEntity feedback, Principal principal) {
+    public String addFeedback(@ModelAttribute("feedback") Feedback feedback, Principal principal) {
         return service.addFeedback(feedback, principal);
     }
 
     @GetMapping("/reply/{id}")
-    public String replyToFeedback(@ModelAttribute("feedback") FeedbackEntity feedback,
+    public String replyToFeedback(@ModelAttribute("feedback") Feedback feedback,
                                   @PathVariable Long id,
                                   Model model) {
         return service.replyToFeedback(feedback, id, model);
     }
 
     @PostMapping("/reply/{id}")
-    public String replyToFeedback(@ModelAttribute("feedback") FeedbackEntity feedback,
+    public String replyToFeedback(@ModelAttribute("feedback") Feedback feedback,
                                   @PathVariable Long id,
                                   Principal principal) {
         return service.replyToFeedback(feedback, id, principal);

@@ -12,7 +12,7 @@
 <body style="background-color: #F0F8FF">
 <div class="container py-3">
 
-    <header th:insert="~{parts/header}"></header>
+    <header th:insert="~{parts/searchHeader}"></header>
 
     <main>
         <br><br><br><br>
@@ -21,27 +21,60 @@
                 <p class="fs-5 text-muted">Small introduction to this web application and its functions</p>
             </div>
 
-        <div sec:authorize="hasAuthority('ADMIN')" style="text-align: right">
-            <a th:href="@{ '/api/category/admin/add' }" class="btn btn-success mb-4">Add Category</a>
+        <div sec:authorize="authenticated" style="text-align: right">
+            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{ '/api/category/admin/add' }" class="btn btn-success mb-4">Add Category</a>
             <a sec:authorize="hasAuthority('ADMIN')" th:href="@{ '/api/characters/admin/add' }"
-               class="btn btn-success mb-4">Add</a>
+               class="btn btn-success mb-4">Add Character</a>
+            <a sec:authorize="hasAuthority('ADULT')"
+               th:href="@{ '/api/characters/adult/request/add' }" class="btn btn-success mb-4">Request
+                to add</a>
         </div>
 
-        <div class="album py-2">
-            <div class="row">
-                <div class="col-4 my-2 text-center" th:each="el : ${category}">
-                    <div class="card shadow-sm">
-                        <img th:src=" @{ ${path} + '/' + ${el.getName()} + '/' + ${el.getImgName()} } "
-                             class="card-img-top" width="100%" height="225" alt="home_char_img">
-                        <div class="card-body">
-                            <p class="card-text" th:text="${el.getName()}"></p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="btn-group">
-                                    <a th:href="@{ '/api/category/user/' + ${el.getId()} }"
-                                       class="btn btn-sm btn-outline-primary">View</a>
-                                    <a sec:authorize="hasAuthority('ADMIN')"
-                                       th:href="@{ '/api/category/admin/edit/' + ${el.getId()} }"
-                                       class="btn btn-sm btn-outline-primary mx-1">Edit</a>
+
+            <div class="album py-2">
+                <div class="row">
+                    <div class="col-4 my-2 text-center" th:each="el : ${category}">
+                        <div class="card shadow-sm">
+                            <img th:src=" @{ ${path} + '/' + ${el.getName()} + '/' + ${el.getImgName()} } "
+                                 class="card-img-top" width="100%" height="225" alt="home_char_img">
+                            <div class="card-body">
+                                <p class="card-text" th:text="${el.getName()}"></p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <a th:href="@{ '/api/category/user/' + ${el.getId()} }"
+                                           class="btn btn-sm btn-outline-primary">View</a>
+                                        <a sec:authorize="hasAuthority('ADMIN')"
+                                           th:href="@{ '/api/category/admin/edit/' + ${el.getId()} }"
+                                           class="btn btn-sm btn-outline-primary mx-1">Edit</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <div th:if="${character.size() != 0}">
+            <div class="album py-2">
+                <div class="row">
+                    <div class="col-4 my-2 text-center" th:each="el : ${character}">
+                        <div class="card shadow-sm">
+                            <img th:src=" @{ ${path} + '/' + ${el.getName()} + '/img/' + ${el.getImageName()} } " class="card-img-top"
+                                 width="100%" height="225" alt="home_char_img">
+                            <div class="card-body">
+                                <p class="card-text" th:text="${el.getName()}"></p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <a th:href="@{ '/api/characters/user/' + ${el.getId()} }"
+                                           class="btn btn-sm btn-outline-primary">View</a>
+                                        <a sec:authorize="hasAuthority('ADMIN')"
+                                           th:href="@{ '/api/characters/admin/edit/' + ${el.getId()} }"
+                                           class="btn btn-sm btn-outline-primary mx-1">Edit</a>
+                                        <a sec:authorize="hasAuthority('ADULT')"
+                                           th:href="@{ '/api/characters/adult/request/edit/' + ${el.getId()} }"
+                                           class="btn btn-sm btn-outline-primary mx-1">Request Edit</a>
+                                    </div>
+                                    <p th:text=" 'Updated: ' + ${ el.getUpdatedDate() }"></p>
                                 </div>
                             </div>
                         </div>

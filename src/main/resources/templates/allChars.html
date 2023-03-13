@@ -25,14 +25,6 @@
             </div>
         </section>
 
-        <div sec:authorize="authenticated" style="text-align: right">
-            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{ '/api/characters/admin/add' }"
-               class="btn btn-success mb-4">Add</a>
-            <a sec:authorize="hasAuthority('ADULT')"
-               th:href="@{ '/api/characters/adult/request/add' }" class="btn btn-success mb-4">Request
-                to add</a>
-        </div>
-
         <div th:if="${character.size() == 0}" class="text-center">
             <p class="h1 text-muted">There is no characters yet...</p>
         </div>

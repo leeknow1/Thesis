@@ -1,6 +1,6 @@
 package com.miras.cclearner.config;
 
-import com.miras.cclearner.entity.UserEntity;
+import com.miras.cclearner.entity.Users;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,9 +10,9 @@ import java.util.Collections;
 
 public class CustomUserDetails implements UserDetails {
 
-    private final UserEntity user;
+    private final Users user;
 
-    public CustomUserDetails(UserEntity user) {
+    public CustomUserDetails(Users user) {
         this.user = user;
     }
 

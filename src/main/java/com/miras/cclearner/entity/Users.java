@@ -7,22 +7,24 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "char_category")
+@Table(name = "users")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CharCategory {
+public class Users {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "char_id")
-    private CharactersEntity characterId;
+    @Column(name = "username", unique = true)
+    private String username;
 
-    @OneToOne
-    @JoinColumn(name = "category_id")
-    private CategoryEntity categoryId;
+    @Column(name = "password")
+    private String password;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
+    private Roles role;
 }

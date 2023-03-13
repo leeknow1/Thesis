@@ -6,13 +6,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Entity
-@Table(name = "characters")
+@Table(name = "character")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CharactersEntity {
+public class Character {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,4 +55,7 @@ public class CharactersEntity {
 
     @Column(name = "original_id")
     private Long originalId;
+
+    @ManyToMany
+    private Set<Category> category;
 }

@@ -1,6 +1,6 @@
 package com.miras.cclearner.controller;
 
-import com.miras.cclearner.entity.CharactersEntity;
+import com.miras.cclearner.entity.Character;
 import com.miras.cclearner.service.CharacterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -24,12 +24,12 @@ public class CharacterController {
     }
 
     @GetMapping("/admin/add")
-    public String addCharacter(@ModelAttribute("character") CharactersEntity character) {
-        return characterService.addCharacter(character);
+    public String addCharacter(@ModelAttribute("character") Character character, Model model) {
+        return characterService.addCharacter(character, model);
     }
 
     @PostMapping("/admin/add")
-    public String addCharacter(@ModelAttribute("character") CharactersEntity character, @RequestParam(value = "img") MultipartFile img, @RequestParam(value = "aud") MultipartFile aud, @RequestParam(value = "vid") MultipartFile vid, BindingResult bindingResult, Model model, Principal principal) {
+    public String addCharacter(@ModelAttribute("character") Character character, @RequestParam(value = "img") MultipartFile img, @RequestParam(value = "aud") MultipartFile aud, @RequestParam(value = "vid") MultipartFile vid, BindingResult bindingResult, Model model, Principal principal) {
         return characterService.addCharacter(character, img, aud, vid, bindingResult, model, principal);
     }
 
@@ -39,7 +39,7 @@ public class CharacterController {
     }
 
     @PostMapping("/admin/edit/{id}")
-    public String editCharacter(@PathVariable(name = "id") Long charId, @ModelAttribute("character") CharactersEntity character, @RequestParam(value = "img") MultipartFile img, @RequestParam(value = "aud") MultipartFile aud, @RequestParam(value = "vid") MultipartFile vid, BindingResult bindingResult, Model model, Principal principal) {
+    public String editCharacter(@PathVariable(name = "id") Long charId, @ModelAttribute("character") Character character, @RequestParam(value = "img") MultipartFile img, @RequestParam(value = "aud") MultipartFile aud, @RequestParam(value = "vid") MultipartFile vid, BindingResult bindingResult, Model model, Principal principal) {
         return characterService.editCharacter(charId, character, img, aud, vid, bindingResult, model, principal);
     }
 

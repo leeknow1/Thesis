@@ -1,7 +1,7 @@
 package com.miras.cclearner.common;
 
-import com.miras.cclearner.repository.CategoryEntityRepository;
-import com.miras.cclearner.repository.CharacterEntityRepository;
+import com.miras.cclearner.repository.CategoryRepository;
+import com.miras.cclearner.repository.CharacterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomValidator {
 
-    private final CharacterEntityRepository characterRepository;
+    private final CharacterRepository characterRepository;
 
-    private final CategoryEntityRepository charCategoryRepository;
+    private final CategoryRepository charCategoryRepository;
 
     public boolean checkCharImgName(String name) {
         return characterRepository.existsByImageName(name);
