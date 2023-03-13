@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Characters</title>
+</head>
+<body style="background-color: #F0F8FF">
+<div class="container py-3">
+
+    <header th:insert="~{parts/header}"></header>
+
+    <main>
+        <br><br><br><br>
+            <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+                <h1 class="display-4 fw-normal">Chinese Characters Learning System</h1>
+                <p class="fs-5 text-muted">Small introduction to this web application and its functions</p>
+            </div>
+
+        <div sec:authorize="hasAuthority('ADMIN')" style="text-align: right">
+            <a th:href="@{ '/api/category/admin/add' }" class="btn btn-success mb-4">Add Category</a>
+            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{ '/api/characters/admin/add' }"
+               class="btn btn-success mb-4">Add</a>
+        </div>
+
+        <div class="album py-2">
+            <div class="row">
+                <div class="col-4 my-2 text-center" th:each="el : ${category}">
+                    <div class="card shadow-sm">
+                        <img th:src=" @{ ${path} + '/' + ${el.getName()} + '/' + ${el.getImgName()} } "
+                             class="card-img-top" width="100%" height="225" alt="home_char_img">
+                        <div class="card-body">
+                            <p class="card-text" th:text="${el.getName()}"></p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <a th:href="@{ '/api/category/user/' + ${el.getId()} }"
+                                       class="btn btn-sm btn-outline-primary">View</a>
+                                    <a sec:authorize="hasAuthority('ADMIN')"
+                                       th:href="@{ '/api/category/admin/edit/' + ${el.getId()} }"
+                                       class="btn btn-sm btn-outline-primary mx-1">Edit</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br><br><br><br><br>
+
+    </main>
+
+    <footer class="container" th:insert="~{parts/footer}"></footer>
+
+</div>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+</body>
+</html>

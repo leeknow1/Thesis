@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/f93ea8e587.js" crossorigin="anonymous"></script>
+    <title>Request Characters</title>
+</head>
+<body style="background-color: #F0F8FF">
+<div class="container py-3">
+
+    <header th:insert="~{parts/requestHeader}"></header>
+    <br><br><br>
+
+    <main>
+        <div th:object="${character}">
+
+            <div th:if="${character.getVideoName() !=null}" class="ratio ratio-16x9">
+                <video width="800" height="500" controls>
+                    <source th:src="@{ ${videoPath} + '/' + ${character.getVideoName()} }" type="video/mp4">
+                </video>
+            </div>
+            <div th:if="${character.getVideoName() == null}">
+                <p class="h1 text-muted">No video changed</p>
+            </div>
+
+            <br>
+            <p>Pronunciation:</p>
+
+            <div th:if="${character.getAudioName() != null}">
+                <audio controls>
+                    <source th:src="@{ ${audPath} + '/' + ${character.getAudioName()} }" type="audio/mpeg">
+                </audio>
+            </div>
+            <div th:if="${character.getAudioName() == null}">
+                <p class="h1 text-muted">No audio changed</p>
+            </div>
+
+            <h1>Character Name:</h1>
+            <h1 th:text="${character.getName()}"></h1><br>
+            <h4>Description:</h4>
+            <h4 th:text="${character.getDescription()}"></h4><br>
+            <h4>Examples:</h4>
+            <h4 th:text="${character.getExample()}"></h4><br>
+
+            <h6>Please like or dislike this request</h6>
+            <a th:href=" @{ '/api/characters/request/' + ${character.getId()} + '/like' } "
+               style="color: inherit">
+                <i class="fa-solid fa-thumbs-up" th:text=" ${character.getLikes()}"></i>
+            </a>
+            <a th:href=" @{ '/api/characters/request/' + ${character.getId()} + '/dislike' }"
+               style="margin-left: 30px; color: inherit">
+                <i class="fa-solid fa-thumbs-down" th:text=" ${character.getDislikes()}"></i>
+            </a>
+
+
+            <br>
+            <p class="text-muted" th:text=" 'Requested by: ' + ${character.getAuthor()} "
+               style="margin-top: 50px"></p>
+            <p class="text-muted" th:text=" 'Requested at: ' + ${character.getUpdatedDate()} "></p>
+        </div>
+
+        <br>
+        <div sec:authorize="hasAuthority('ADMIN')">
+            <a th:href="@{ '/api/characters/admin/request/approve/' + ${character.getId()} }"
+               type="submit" class="btn btn-success">Approve</a>
+            <a th:href="@{ '/api/characters/admin/request/disapprove/' + ${character.getId()} }"
+               type="submit" class="btn btn-danger">Disapprove</a>
+        </div>
+    </main>
+
+    <br><br><br><br><br>
+    <footer class="container" th:insert="~{parts/footer}"></footer>
+
+</div>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+</body>
+</html>

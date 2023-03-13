@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Request Characters</title>
+    <script src="https://kit.fontawesome.com/f93ea8e587.js" crossorigin="anonymous"></script>
+</head>
+<body style="background-color: #F0F8FF">
+<div class="container py-3">
+
+    <header th:insert="~{parts/requestHeader}"></header>
+
+    <main>
+
+        <section class="py-5 text-center container">
+            <div class="row py-lg-5">
+                <div class="col-lg-6 col-md-8 mx-auto">
+                    <h1 class="fw-light">All requested characters</h1>
+                    <p class="lead text-muted">Explanation of this page</p>
+                </div>
+            </div>
+        </section>
+
+        <div th:if="${character.size() == 0}" class="text-center">
+            <p class="h1 text-muted">There is no requested characters yet...</p>
+        </div>
+
+        <div th:if="${character.size() != 0}">
+            <div class="album py-2">
+                <div class="row">
+                    <div class="col-4 my-2 text-center" th:each="el : ${character}">
+                        <div class="card shadow-sm">
+                            <div th:if="${el.getImageName() != null}">
+                                <img th:src=" @{ ${path} + '/' + ${el.getName()} + '/img/' + ${el.getImageName()} } " class="card-img-top"
+                                     width="100%" height="225" alt="request_char_img">
+                            </div>
+                            <div th:if="${el.getImageName() == null}">
+                                <p class="h1 text-muted">No image changed</p>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text" th:text="${el.getName()}"></p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <a th:href="@{ '/api/characters/request/' + ${el.getId()} }"
+                                           class="btn btn-sm btn-outline-primary">View</a>
+                                    </div>
+                                    <div>
+                                        <i class="fa-solid fa-thumbs-up" th:text=" ${el.getLikes()}"></i>
+                                        <i class="fa-solid fa-thumbs-down" th:text=" ${el.getDislikes()}"
+                                           style="margin-left: 15px"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br><br><br><br><br>
+
+    </main>
+
+    <footer class="container" th:insert="~{parts/footer}"></footer>
+
+</div>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+</body>
+</html>
