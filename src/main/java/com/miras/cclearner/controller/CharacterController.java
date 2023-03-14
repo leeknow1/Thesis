@@ -23,6 +23,11 @@ public class CharacterController {
         return characterService.getOneCharacter(charId, model);
     }
 
+    @GetMapping("/mine")
+    public String getUsersCharacters(Principal principal, Model model){
+        return characterService.getUsersCharacters(principal, model);
+    }
+
     @GetMapping("/admin/add")
     public String addCharacter(@ModelAttribute("character") Character character, Model model) {
         return characterService.addCharacter(character, model);

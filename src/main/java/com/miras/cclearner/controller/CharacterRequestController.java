@@ -23,6 +23,11 @@ public class CharacterRequestController {
         return service.getRequestCharacters(model);
     }
 
+    @GetMapping("/request/mine")
+    public String getUserRequestCharacters(Principal principal, Model model){
+        return service.getUserRequestCharacters(principal, model);
+    }
+
     @GetMapping("/request/{id}")
     public String getOneRequestCharacterByCategory(@PathVariable(name = "id") Long charId, Model model) {
         return service.getOneRequestCharacter(charId, model);

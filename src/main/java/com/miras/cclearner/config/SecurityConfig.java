@@ -39,10 +39,8 @@ public class SecurityConfig {
 
                 .requestMatchers("/api/characters/adult/**").hasAuthority("ADULT")
 
-                .requestMatchers("/api/requests").authenticated()
                 .requestMatchers("/api/characters/request/**").authenticated()
-                .requestMatchers("/api/numbers/request/**").authenticated()
-                .requestMatchers("/api/phrases/request/**").authenticated()
+                .requestMatchers("/api/characters/mine").authenticated()
 
                 .requestMatchers("/api/feedback", "/api/feedback/reply/**", "/api/feedback/add").authenticated()
                 .requestMatchers("/api/feedback/admin/**").hasAuthority("ADMIN")

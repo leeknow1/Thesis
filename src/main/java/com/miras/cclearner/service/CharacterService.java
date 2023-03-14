@@ -51,6 +51,20 @@ public class CharacterService {
         return "allChars";
     }
 
+    public String getUsersCharacters(Principal principal, Model model) {
+        List<Character> characters = charRepository.findAllByUser(principal.getName());
+        model.addAttribute("character", characters);
+
+        if (characters.size() != 0)
+            model.addAttribute("path", filePathUtils.getCharPath());
+
+        if (passedOneHour()) {
+            model.addAttribute("passedHour", true);
+        }
+
+        return "allChars";
+    }
+
     public String getOneCharacter(@PathVariable(name = "id") Long charId, Model model) {
         Character character = charRepository.findById(charId).orElseThrow();
 

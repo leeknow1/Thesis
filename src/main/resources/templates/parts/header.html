@@ -4,8 +4,8 @@
             <a class="navbar-brand" href="/api/home">Home</a>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">My Characters</a>
+                    <li sec:authorize="authenticated" class="nav-item">
+                        <a class="nav-link" href="/api/characters/mine">My Characters</a>
                     </li>
                     <li th:if="${passedHour}" sec:authorize="anonymous" class="nav-item mx-5">
                         <h4 style="color: red">It's been more than 1 hour! Your eyes should rest now!</h4>

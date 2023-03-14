@@ -46,6 +46,16 @@ public class CharacterRequestService {
         return "request/allCharsRequest";
     }
 
+    public String getUserRequestCharacters(Principal principal, Model model) {
+        List<Character> characters = charRepository.findAllRequestByUser(principal.getName());
+        model.addAttribute("character", characters);
+
+        if(characters.size() != 0)
+            model.addAttribute("path", filePathUtils.getCharRequestPath());
+
+        return "request/allCharsRequest";
+    }
+
     public String getOneRequestCharacter(@PathVariable(name = "id") Long charId, Model model) {
         Character character = charRepository.findById(charId).orElseThrow();
 
@@ -348,18 +358,22 @@ public class CharacterRequestService {
         Likes dislike = likesRepository.isUserDislikedChar(user.getId(), charId);
 
         if (like == null) {
-            if (dislike != null) {
-                character.setDislikes(character.getDislikes() - 1);
-                likesRepository.delete(dislike);
-            }
+            if(character.getLikes() >= 10) {
+                requestApproved(charId);
+            } else {
+                if (dislike != null) {
+                    character.setDislikes(character.getDislikes() - 1);
+                    likesRepository.delete(dislike);
+                }
 
-            character.setLikes(character.getLikes() + 1);
-            Likes likes = new Likes();
-            likes.setUserId(user.getId());
-            likes.setCharId(charId);
-            likes.setLiked(true);
-            likesRepository.save(likes);
-            charRepository.save(character);
+                character.setLikes(character.getLikes() + 1);
+                Likes likes = new Likes();
+                likes.setUserId(user.getId());
+                likes.setCharId(charId);
+                likes.setLiked(true);
+                likesRepository.save(likes);
+                charRepository.save(character);
+            }
         } else {
             character.setLikes(character.getLikes() - 1);
             likesRepository.delete(like);
@@ -377,17 +391,21 @@ public class CharacterRequestService {
         Likes dislike = likesRepository.isUserDislikedChar(user.getId(), charId);
 
         if (dislike == null) {
-            if (like != null) {
-                character.setLikes(character.getLikes() - 1);
-                likesRepository.delete(like);
+            if(character.getDislikes() >= 10) {
+                requestDisapproved(charId);
+            } else {
+                if (like != null) {
+                    character.setLikes(character.getLikes() - 1);
+                    likesRepository.delete(like);
+                }
+                character.setDislikes(character.getDislikes() + 1);
+                Likes likes = new Likes();
+                likes.setUserId(user.getId());
+                likes.setCharId(charId);
+                likes.setDisliked(true);
+                likesRepository.save(likes);
+                charRepository.save(character);
             }
-            character.setDislikes(character.getDislikes() + 1);
-            Likes likes = new Likes();
-            likes.setUserId(user.getId());
-            likes.setCharId(charId);
-            likes.setDisliked(true);
-            likesRepository.save(likes);
-            charRepository.save(character);
         } else {
             character.setDislikes(character.getDislikes() - 1);
             likesRepository.delete(dislike);

@@ -19,6 +19,12 @@ public interface CharacterRepository extends JpaRepository<Character, Long> {
 
     List<Character> findAllByOriginalId(Long id);
 
+    @Query("select c from Character c where c.author = :username and c.status = 'APPROVED' ")
+    List<Character> findAllByUser(@Param("username") String username);
+
+    @Query("select c from Character c where c.author = :username and c.status = 'REQUEST' ")
+    List<Character> findAllRequestByUser(@Param("username") String username);
+
     boolean existsByImageName(String name);
 
     boolean existsByAudioName(String name);
