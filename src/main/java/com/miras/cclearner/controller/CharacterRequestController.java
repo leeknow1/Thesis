@@ -34,18 +34,18 @@ public class CharacterRequestController {
     }
 
     @GetMapping("/request/{id}/like")
-    public String likeRequestCharacter(@PathVariable(name = "id") Long charId, Model model, Principal principal) {
+    public String likeRequestCharacter(@PathVariable(name = "id") Long charId, Principal principal) {
         return service.likeRequestCharacter(charId, principal);
     }
 
     @GetMapping("/request/{id}/dislike")
-    public String dislikeRequestCharacter(@PathVariable(name = "id") Long charId, Model model, Principal principal) {
+    public String dislikeRequestCharacter(@PathVariable(name = "id") Long charId, Principal principal) {
         return service.dislikeRequestCharacter(charId, principal);
     }
 
     @GetMapping("/adult/request/add")
-    public String requestAddCharacter(@ModelAttribute("character") Character character) {
-        return service.requestAddCharacter(character);
+    public String requestAddCharacter(@ModelAttribute("character") Character character, Model model) {
+        return service.requestAddCharacter(character, model);
     }
 
     @PostMapping("/adult/request/add")

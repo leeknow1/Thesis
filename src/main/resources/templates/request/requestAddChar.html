@@ -34,6 +34,7 @@
                 <label for="cName" class="form-label">Name</label>
                 <input class="form-control mb-3" type="text" placeholder="Character name" id="cName"
                        th:field="*{name}" required>
+                <small style="color: red" th:if="${isNameInvalid}">Character with this name already exist!</small><br>
             </div>
 
             <div class="mb-3 w-75">
@@ -56,6 +57,13 @@
                 <label for="video" class="form-label">Please choose character video</label>
                 <input class="form-control mb-3" type="file" id="video" name="vid" accept="video/*" required>
                 <small style="color: red" th:if="${isVidInvalid}">File with this name already exist!</small><br>
+            </div>
+
+            <div style="height: 200px; width: 300px; border: 1px solid #ccc; overflow: auto">
+                <label for="cates">Choose category for character:</label>
+                <div class="form-check form-switch" th:each="categ : ${categories}">
+                    <input class="form-check-input" type="checkbox" id="cates" th:text="${categ.name}" th:value="${categ.id}" th:field="*{category}">
+                </div>
             </div>
 
             <button type="submit" class="btn btn-success">Submit</button>

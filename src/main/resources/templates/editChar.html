@@ -35,6 +35,7 @@
                 <label for="cName" class="form-label">Name</label>
                 <input class="form-control mb-3" type="text" placeholder="Character name" id="cName"
                        th:field="*{name}">
+                <small style="color: red" th:if="${isNameInvalid}">Character with this name already exist!</small><br>
             </div>
 
             <div class="mb-3 w-75">
@@ -43,7 +44,7 @@
                           th:field="*{description}"></textarea>
 
                 <label for="cExp" class="form-label">Example</label>
-                <textarea class="form-control form-control-lg mb-3" type="text" placeholder="Character examples"
+                <textarea class="form-control form-control-lg mb-3" placeholder="Character examples"
                           id="cExp" th:field="*{example}"></textarea>
             </div>
 

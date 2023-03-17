@@ -165,6 +165,11 @@ public class CharacterService {
         character.setVideoName(changingChar.getVideoName());
 
         if (!changingChar.getName().equals(character.getName())) {
+            if (customValidator.checkName(character.getName())) {
+                model.addAttribute("isNameInvalid", true);
+                return editCharacter(charId, model);
+            }
+
             File oldDirName = new File(filePathUtils.getCharAbsPath(changingChar.getName()));
             File newDirName = new File(filePathUtils.getCharAbsPath(character.getName()));
             oldDirName.renameTo(newDirName);
@@ -172,7 +177,7 @@ public class CharacterService {
 
         try {
             if (!img.isEmpty()) {
-                Path path = Paths.get(filePathUtils.getCharImgAbsPath(changingChar.getName() + "/" + changingChar.getImageName()));
+                Path path = Paths.get(filePathUtils.getCharImgAbsPath(changingChar.getName()) + "/" + changingChar.getImageName());
                 Files.delete(path);
                 img.transferTo(new File(filePathUtils.getCharImgAbsPath(changingChar.getName()) + "/" + img.getOriginalFilename()));
                 character.setImageName(img.getOriginalFilename());
@@ -203,7 +208,6 @@ public class CharacterService {
     public String deleteCharacter(@PathVariable(name = "id") Long charId) {
         Character character = charRepository.findById(charId).orElseThrow();
 
-        Path path = Paths.get(filePathUtils.getCharAbsPath(character.getName()));
         Path pathImg = Paths.get(filePathUtils.getCharImgAbsPath(character.getName()) + "/" + character.getImageName());
         Path pathAud = Paths.get(filePathUtils.getCharAudAbsPath(character.getName()) + "/" + character.getAudioName());
         Path pathVid = Paths.get(filePathUtils.getCharVidAbsPath(character.getName()) + "/" + character.getVideoName());

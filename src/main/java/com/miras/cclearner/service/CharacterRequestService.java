@@ -6,6 +6,7 @@ import com.miras.cclearner.entity.*;
 import com.miras.cclearner.entity.Character;
 import com.miras.cclearner.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,6 +36,7 @@ public class CharacterRequestService {
     private final UserRepository userRepository;
     private final CustomValidator customValidator;
     private final LikesRepository likesRepository;
+    private final CategoryRepository categoryRepository;
 
     public String getRequestCharacters(Model model) {
         List<Character> characters = charRepository.findAllModified();
@@ -68,7 +70,8 @@ public class CharacterRequestService {
         return "request/oneRequestChar";
     }
 
-    public String requestAddCharacter(@ModelAttribute("character") Character character) {
+    public String requestAddCharacter(@ModelAttribute("character") Character character, Model model) {
+        model.addAttribute("categories", categoryRepository.findAll(Sort.by("id")));
         return "request/requestAddChar";
     }
 
@@ -80,22 +83,27 @@ public class CharacterRequestService {
                                       Model model,
                                       Principal principal) {
         if (bindingResult.hasErrors()) {
-            return requestAddCharacter(character);
+            return requestAddCharacter(character, model);
+        }
+
+        if (customValidator.checkName(character.getName())) {
+            model.addAttribute("isNameInvalid", true);
+            return requestAddCharacter(character, model);
         }
 
         if (customValidator.checkCharImgName(img.getOriginalFilename())) {
             model.addAttribute("isImgInvalid", true);
-            return requestAddCharacter(character);
+            return requestAddCharacter(character, model);
         }
 
         if (customValidator.checkCharAudName(aud.getOriginalFilename())) {
             model.addAttribute("isAudInvalid", true);
-            return requestAddCharacter(character);
+            return requestAddCharacter(character, model);
         }
 
         if (customValidator.checkCharVidName(vid.getOriginalFilename())) {
             model.addAttribute("isVidInvalid", true);
-            return requestAddCharacter(character);
+            return requestAddCharacter(character, model);
         }
 
         Path path = Paths.get(filePathUtils.getCharAbsRequestPath() + "/" + character.getName());
@@ -137,6 +145,7 @@ public class CharacterRequestService {
         request.setLikes(0);
         request.setDislikes(0);
         request.setStatus("REQUEST");
+        request.setCategory(character.getCategory());
 
         charRepository.save(request);
 
@@ -146,6 +155,7 @@ public class CharacterRequestService {
     public String requestEditCharacter(@PathVariable(name = "id") Long charId,
                                        Model model) {
         model.addAttribute("character", charRepository.findById(charId).orElseThrow());
+        model.addAttribute("categories", categoryRepository.findAll(Sort.by("id")));
         return "request/requestEditChar";
     }
 
@@ -178,6 +188,14 @@ public class CharacterRequestService {
         }
 
         Character originalChar = charRepository.findById(charId).orElseThrow();
+
+        if(!originalChar.getName().equals(character.getName())){
+            if (customValidator.checkName(character.getName())) {
+                model.addAttribute("isNameInvalid", true);
+                return requestEditCharacter(charId, model);
+            }
+        }
+
         Users user = userRepository.findByUsername(principal.getName());
 
         Character requestChar = new Character();
@@ -190,6 +208,7 @@ public class CharacterRequestService {
         requestChar.setLikes(0);
         requestChar.setDislikes(0);
         requestChar.setStatus("REQUEST");
+        requestChar.setCategory(character.getCategory());
 
         requestChar.setImageName(null);
         requestChar.setAudioName(null);
@@ -275,8 +294,9 @@ public class CharacterRequestService {
             character.setExample(splitString(request.getExample()));
             character.setAuthor(request.getAuthor());
             character.setUpdatedDate(getFormattedDate());
-            charRepository.save(character);
+            character.setCategory(request.getCategory());
             charRepository.deleteById(charId);
+            charRepository.save(character);
         } else {
             request.setStatus("APPROVED");
             request.setLikes(0);
