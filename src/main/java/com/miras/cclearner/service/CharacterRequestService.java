@@ -378,15 +378,15 @@ public class CharacterRequestService {
         Likes dislike = likesRepository.isUserDislikedChar(user.getId(), charId);
 
         if (like == null) {
-            if(character.getLikes() >= 10) {
+            if (dislike != null) {
+                character.setDislikes(character.getDislikes() - 1);
+                likesRepository.delete(dislike);
+            }
+            character.setLikes(character.getLikes() + 1);
+
+            if(character.getLikes() - character.getDislikes() > 2){
                 requestApproved(charId);
             } else {
-                if (dislike != null) {
-                    character.setDislikes(character.getDislikes() - 1);
-                    likesRepository.delete(dislike);
-                }
-
-                character.setLikes(character.getLikes() + 1);
                 Likes likes = new Likes();
                 likes.setUserId(user.getId());
                 likes.setCharId(charId);
@@ -411,14 +411,15 @@ public class CharacterRequestService {
         Likes dislike = likesRepository.isUserDislikedChar(user.getId(), charId);
 
         if (dislike == null) {
-            if(character.getDislikes() >= 10) {
+            if (like != null) {
+                character.setLikes(character.getLikes() - 1);
+                likesRepository.delete(like);
+            }
+            character.setDislikes(character.getDislikes() + 1);
+
+            if(character.getDislikes() - character.getLikes() > 2){
                 requestDisapproved(charId);
             } else {
-                if (like != null) {
-                    character.setLikes(character.getLikes() - 1);
-                    likesRepository.delete(like);
-                }
-                character.setDislikes(character.getDislikes() + 1);
                 Likes likes = new Likes();
                 likes.setUserId(user.getId());
                 likes.setCharId(charId);

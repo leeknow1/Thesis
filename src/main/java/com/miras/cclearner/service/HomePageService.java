@@ -27,9 +27,13 @@ public class HomePageService {
             return "registration";
         }
 
-        if (user.getRoleID() == null) user.setRoleID("2");
+        Users newUser = new Users();
+        newUser.setUsername(user.getUsername());
+        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        Users newUser = new Users(null, user.getUsername(), passwordEncoder.encode(user.getPassword()), roleRepository.findById(Long.parseLong(user.getRoleID())).get());
+        if (user.getRoleID() == null)
+            user.setRoleID("2");
+        newUser.setRole(roleRepository.findById(Long.valueOf(user.getRoleID())).orElseThrow());
 
         userRepository.save(newUser);
 
