@@ -3,6 +3,7 @@ package com.miras.cclearner.controller;
 
 import com.miras.cclearner.dto.UserDTO;
 import com.miras.cclearner.entity.Category;
+import com.miras.cclearner.entity.Users;
 import com.miras.cclearner.service.CategoryService;
 import com.miras.cclearner.service.CharacterService;
 import com.miras.cclearner.service.HomePageService;
@@ -67,5 +68,15 @@ public class HomeController {
     @PostMapping("/registration")
     public String registration(@ModelAttribute("newUser") UserDTO user, Model model) {
         return service.registration(user, model);
+    }
+
+    @GetMapping("/refresh-password")
+    public String refreshPassword(@ModelAttribute("user") Users user){
+        return service.refreshPassword(user);
+    }
+
+    @PostMapping("/refresh-password")
+    public String refreshPassword(@ModelAttribute("user") Users user, Model model){
+        return service.refreshPassword(user, model);
     }
 }

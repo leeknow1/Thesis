@@ -25,7 +25,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final RolesRepository roleRepository;
 
-    @GetMapping
     public String getAllUsers(@RequestParam(defaultValue = "1", required = false, value = "page") int page, Model model){
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("id"));
         Page<Users> users = userRepository.findAll(pageable);
@@ -36,7 +35,6 @@ public class UserService {
         return "allUsers";
     }
 
-    @GetMapping("/edit/{id}")
     public String editUser(@PathVariable Long id, Model model){
         Users user = userRepository.findById(id).orElseThrow();
         UserDTO userDTO = new UserDTO(user.getUsername());
@@ -44,7 +42,6 @@ public class UserService {
         return "editUser";
     }
 
-    @PostMapping("/edit/{id}")
     public String editUser(@PathVariable Long id, @ModelAttribute("user") UserDTO userDTO, Model model){
         Users user = userRepository.findById(id).orElseThrow();
 

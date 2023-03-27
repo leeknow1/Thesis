@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +38,24 @@ public class HomePageService {
         newUser.setRole(roleRepository.findById(Long.valueOf(user.getRoleID())).orElseThrow());
 
         userRepository.save(newUser);
+
+        return "redirect:/api/home";
+    }
+
+    public String refreshPassword(@ModelAttribute("user") Users user){
+        return "refreshPassword";
+    }
+
+    public String refreshPassword(@ModelAttribute("user") Users user, Model model){
+        if (!userRepository.existsByUsername(user.getUsername())) {
+            model.addAttribute("message", true);
+            return "refreshPassword";
+        }
+
+        Users refreshPassword = userRepository.findByUsername(user.getUsername());
+        refreshPassword.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        userRepository.save(refreshPassword);
 
         return "redirect:/api/home";
     }
