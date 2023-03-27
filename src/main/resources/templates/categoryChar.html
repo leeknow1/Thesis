@@ -23,7 +23,7 @@
 
         <div sec:authorize="authenticated" style="text-align: right">
             <a sec:authorize="hasAuthority('ADMIN')" th:href="@{ '/api/category/admin/add' }" class="btn btn-success mb-4">Add Category</a>
-            <a sec:authorize="hasAuthority('ADMIN')" th:href="@{ '/api/characters/admin/add' }"
+            <a sec:authorize="hasAnyAuthority('ADMIN', 'MANAGER')" th:href="@{ '/api/characters/admin/add' }"
                class="btn btn-success mb-4">Add Character</a>
             <a sec:authorize="hasAuthority('ADULT')"
                th:href="@{ '/api/characters/adult/request/add' }" class="btn btn-success mb-4">Request
@@ -43,7 +43,7 @@
                                     <div class="btn-group">
                                         <a th:href="@{ '/api/category/user/' + ${el.getId()} }"
                                            class="btn btn-sm btn-outline-primary">View</a>
-                                        <a sec:authorize="hasAuthority('ADMIN')"
+                                        <a sec:authorize="hasAnyAuthority('ADMIN', 'MANAGER')"
                                            th:href="@{ '/api/category/admin/edit/' + ${el.getId()} }"
                                            class="btn btn-sm btn-outline-primary mx-1">Edit</a>
                                     </div>
@@ -67,7 +67,7 @@
                                     <div class="btn-group">
                                         <a th:href="@{ '/api/characters/user/' + ${el.getId()} }"
                                            class="btn btn-sm btn-outline-primary">View</a>
-                                        <a sec:authorize="hasAuthority('ADMIN')"
+                                        <a sec:authorize="hasAnyAuthority('ADMIN', 'MANAGER')"
                                            th:href="@{ '/api/characters/admin/edit/' + ${el.getId()} }"
                                            class="btn btn-sm btn-outline-primary mx-1">Edit</a>
                                         <a sec:authorize="hasAuthority('ADULT')"

@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .requestMatchers("/content/**", "/requests/**").permitAll()
                 .requestMatchers("/api/characters/user/**", "/api/category/user/**").permitAll()
 
-                .requestMatchers("/api/characters/admin/**").hasAuthority("ADMIN")
+                .requestMatchers("/api/characters/admin/**").hasAnyAuthority("ADMIN", "MANAGER")
                 .requestMatchers("/api/admin/users/**").hasAuthority("ADMIN")
 
                 .requestMatchers("/api/characters/adult/**").hasAuthority("ADULT")

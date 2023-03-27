@@ -27,4 +27,7 @@ public class Users {
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Roles role;
+
+    @Column(name = "points")
+    private Integer points = 0;
 }

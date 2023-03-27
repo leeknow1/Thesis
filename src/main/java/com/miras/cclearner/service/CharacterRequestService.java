@@ -37,6 +37,7 @@ public class CharacterRequestService {
     private final CustomValidator customValidator;
     private final LikesRepository likesRepository;
     private final CategoryRepository categoryRepository;
+    private final RolesRepository roleRepository;
 
     public String getRequestCharacters(Model model) {
         List<Character> characters = charRepository.findAllModified();
@@ -340,6 +341,13 @@ public class CharacterRequestService {
             }
             charRepository.save(request);
         }
+
+        Users user = userRepository.findByUsername(request.getAuthor());
+        user.setPoints(user.getPoints() + 10);
+        if(user.getRole().getId() == 2 && user.getPoints() >= 100){
+            user.setRole(roleRepository.findById(3L).orElseThrow());
+        }
+        userRepository.save(user);
 
         return "redirect:/api/characters/request";
     }
