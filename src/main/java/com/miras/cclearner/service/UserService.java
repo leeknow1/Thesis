@@ -62,6 +62,11 @@ public class UserService {
         return "redirect:/api/admin/users";
     }
 
+    public String deleteUser(Long id) {
+        userRepository.deleteById(id);
+        return "redirect:/api/admin/users";
+    }
+
     List<Integer> getThreePages(int currentPage , int totalPages){
         List<Integer> threePages = new ArrayList<>();
 

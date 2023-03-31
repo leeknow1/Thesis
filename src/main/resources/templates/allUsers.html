@@ -24,6 +24,7 @@
       <th scope="col">Username</th>
       <th scope="col">Role</th>
       <th scope="col">Edit</th>
+      <th scope="col">Delete</th>
     </tr>
     </thead>
     <tbody>
@@ -32,6 +33,7 @@
       <td th:text="${el.username}">...</td>
       <td th:text="${el.role.name}">...</td>
       <th><a th:href="@{'/api/admin/users/edit/' + ${el.id}}">Edit</a></th>
+      <th><a th:href="@{'/api/admin/users/delete/' + ${el.id}}">Delete</a></th>
     </tr>
     </tbody>
   </table>

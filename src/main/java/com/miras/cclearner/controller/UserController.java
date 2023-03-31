@@ -28,4 +28,9 @@ public class UserController {
     public String editUser(@PathVariable Long id, @ModelAttribute("user") UserDTO userDTO, Model model){
         return userService.editUser(id, userDTO, model);
     }
+
+    @GetMapping("/delete/{id}")
+    public String deleteUser(@PathVariable Long id){
+        return userService.deleteUser(id);
+    }
 }
