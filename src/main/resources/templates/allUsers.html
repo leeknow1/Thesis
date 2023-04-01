@@ -11,7 +11,7 @@
 </head>
 <body>
 
-  <header th:insert="~{parts/header}"></header>
+  <header th:insert="~{parts/userHeader}"></header>
 
   <br><br><br>
 
@@ -21,6 +21,7 @@
     <thead>
     <tr>
       <th scope="col">Id</th>
+      <th scope="col">Email</th>
       <th scope="col">Username</th>
       <th scope="col">Role</th>
       <th scope="col">Edit</th>
@@ -30,6 +31,7 @@
     <tbody>
     <tr th:each="el : ${users}">
       <th th:text="${el.id}">...</th>
+      <td th:text="${el.email}">...</td>
       <td th:text="${el.username}">...</td>
       <td th:text="${el.role.name}">...</td>
       <th><a th:href="@{'/api/admin/users/edit/' + ${el.id}}">Edit</a></th>

@@ -25,9 +25,18 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final RolesRepository roleRepository;
 
-    public String getAllUsers(@RequestParam(defaultValue = "1", required = false, value = "page") int page, Model model){
+    public String getAllUsers(@RequestParam(defaultValue = "1", required = false, value = "page") int page,
+                              @RequestParam(required = false, defaultValue = "", value = "user") String username,
+                              Model model){
         Pageable pageable = PageRequest.of(page - 1, 10, Sort.by("id"));
-        Page<Users> users = userRepository.findAll(pageable);
+        Page<Users> users;
+
+        if(username.isBlank()){
+            users = userRepository.findAll(pageable);
+        } else {
+            users = userRepository.findAllByUsername(username, pageable);
+        }
+
         model.addAttribute("users", users.getContent());
         model.addAttribute("threePages", getThreePages(page, users.getTotalPages()));
         model.addAttribute("currentPage", page);
@@ -37,7 +46,9 @@ public class UserService {
 
     public String editUser(@PathVariable Long id, Model model){
         Users user = userRepository.findById(id).orElseThrow();
-        UserDTO userDTO = new UserDTO(user.getUsername());
+        UserDTO userDTO = new UserDTO();
+        userDTO.setEmail(user.getEmail());
+        userDTO.setUsername(user.getUsername());
         model.addAttribute("user", userDTO);
         return "editUser";
     }
@@ -46,7 +57,12 @@ public class UserService {
         Users user = userRepository.findById(id).orElseThrow();
 
         if (!userDTO.getUsername().equals(user.getUsername()) && userRepository.existsByUsername(userDTO.getUsername())) {
-            model.addAttribute("message", true);
+            model.addAttribute("messageUsername", true);
+            return "editUser";
+        }
+
+        if (!userDTO.getEmail().equals(user.getEmail()) && userRepository.existsByEmail(userDTO.getEmail())) {
+            model.addAttribute("messageEmail", true);
             return "editUser";
         }
 

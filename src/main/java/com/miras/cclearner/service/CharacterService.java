@@ -3,8 +3,10 @@ package com.miras.cclearner.service;
 import com.miras.cclearner.common.CustomValidator;
 import com.miras.cclearner.common.FilePathUtils;
 import com.miras.cclearner.entity.Character;
+import com.miras.cclearner.entity.Users;
 import com.miras.cclearner.repository.CategoryRepository;
 import com.miras.cclearner.repository.CharacterRepository;
+import com.miras.cclearner.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ public class CharacterService {
     private final CustomValidator customValidator;
     private final CharacterRequestService requestService;
     private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
 
     public String getCharactersByCategory(@PathVariable(name = "category") Long id,
                                           Model model) {
@@ -52,8 +55,10 @@ public class CharacterService {
     }
 
     public String getUsersCharacters(Principal principal, Model model) {
-        List<Character> characters = charRepository.findAllByUser(principal.getName());
+        Users user = userRepository.findByUsername(principal.getName());
+        List<Character> characters = charRepository.findAllByUser(user.getUsername());
         model.addAttribute("character", characters);
+        model.addAttribute("points", user.getPoints());
 
         if (characters.size() != 0)
             model.addAttribute("path", filePathUtils.getCharPath());

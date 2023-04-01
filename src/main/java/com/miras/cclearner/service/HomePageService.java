@@ -25,11 +25,17 @@ public class HomePageService {
 
     public String registration(@ModelAttribute("newUser") UserDTO user, Model model) {
         if (userRepository.existsByUsername(user.getUsername())) {
-            model.addAttribute("message", true);
+            model.addAttribute("messageUsername", true);
+            return "registration";
+        }
+
+        if (userRepository.existsByEmail(user.getEmail())) {
+            model.addAttribute("messageEmail", true);
             return "registration";
         }
 
         Users newUser = new Users();
+        newUser.setEmail(user.getEmail());
         newUser.setUsername(user.getUsername());
         newUser.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -47,12 +53,12 @@ public class HomePageService {
     }
 
     public String refreshPassword(@ModelAttribute("user") Users user, Model model){
-        if (!userRepository.existsByUsername(user.getUsername())) {
+        if (!userRepository.existsByEmail(user.getEmail())) {
             model.addAttribute("message", true);
             return "refreshPassword";
         }
 
-        Users refreshPassword = userRepository.findByUsername(user.getUsername());
+        Users refreshPassword = userRepository.findByEmail(user.getEmail());
         refreshPassword.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userRepository.save(refreshPassword);

@@ -16,10 +16,12 @@
 <form class="container w-25" th:method="POST" th:action="@{/api/registration}" th:object="${newUser}">
     <h2 class="form-signin-heading">Registration</h2>
     <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="Email" required>
+        <small style="color: red" class="mt-1 mb-3" th:if="${messageEmail}">User with this email already exist!</small><br>
         <label for="username" class="form-label">Username</label>
-        <input type="text" class="form-control" id="username" th:field="*{username}" placeholder="Username" required
-               autofocus>
-        <small style="color: red" class="mt-1 mb-3" th:if="${message}">User with this username already exist!</small>
+        <input type="text" class="form-control" id="username" th:field="*{username}" placeholder="Username" required>
+        <small style="color: red" class="mt-1 mb-3" th:if="${messageUsername}">User with this username already exist!</small>
     </div>
     <div class="mb-3">
         <label for="password" class="form-label">Password</label>

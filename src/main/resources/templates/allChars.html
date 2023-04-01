@@ -25,6 +25,10 @@
             </div>
         </section>
 
+        <div th:if="${points != null}">
+            <p class="h1 text-muted" th:text=" 'You have ' + ${points} + ' points' "></p>
+        </div>
+
         <div th:if="${character.size() == 0}" class="text-center">
             <p class="h1 text-muted">There is no characters yet...</p>
         </div>

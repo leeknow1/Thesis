@@ -15,8 +15,10 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public String getAllUsers(@RequestParam(defaultValue = "1", required = false, value = "page") int page, Model model){
-        return userService.getAllUsers(page, model);
+    public String getAllUsers(@RequestParam(required = false, defaultValue = "1", value = "page") int page,
+                              @RequestParam(required = false, defaultValue = "", value = "user") String username,
+                              Model model){
+        return userService.getAllUsers(page, username, model);
     }
 
     @GetMapping("/edit/{id}")

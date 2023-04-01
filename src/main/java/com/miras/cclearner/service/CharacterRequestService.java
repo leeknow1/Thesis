@@ -344,6 +344,7 @@ public class CharacterRequestService {
 
         Users user = userRepository.findByUsername(request.getAuthor());
         user.setPoints(user.getPoints() + 10);
+        user.setDownloads(user.getDownloads() + 10);
         if(user.getRole().getId() == 2 && user.getPoints() >= 100){
             user.setRole(roleRepository.findById(3L).orElseThrow());
         }
