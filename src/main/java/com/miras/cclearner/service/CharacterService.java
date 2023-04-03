@@ -8,6 +8,8 @@ import com.miras.cclearner.repository.CategoryRepository;
 import com.miras.cclearner.repository.CharacterRepository;
 import com.miras.cclearner.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -18,15 +20,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.List;
+import java.util.zip.ZipOutputStream;
 
 import static com.miras.cclearner.CclearnerApplication.passedOneHour;
 import static com.miras.cclearner.service.ServiceUtils.getFormattedDate;
+import static com.miras.cclearner.service.ServiceUtils.zipFile;
 
 @Service
 @RequiredArgsConstructor
@@ -58,7 +64,9 @@ public class CharacterService {
         Users user = userRepository.findByUsername(principal.getName());
         List<Character> characters = charRepository.findAllByUser(user.getUsername());
         model.addAttribute("character", characters);
+        model.addAttribute("info", true);
         model.addAttribute("points", user.getPoints());
+        model.addAttribute("downloads", user.getDownloads());
 
         if (characters.size() != 0)
             model.addAttribute("path", filePathUtils.getCharPath());
@@ -70,12 +78,18 @@ public class CharacterService {
         return "allChars";
     }
 
-    public String getOneCharacter(@PathVariable(name = "id") Long charId, Model model) {
+    public String getOneCharacter(@PathVariable(name = "id") Long charId, Model model, Principal principal) {
         Character character = charRepository.findById(charId).orElseThrow();
 
+        if(principal != null) {
+            Users user = userRepository.findByUsername(principal.getName());
+            if(user.getDownloads() == 0)
+                model.addAttribute("notAllowedDownload", true);
+        }
+
         model.addAttribute("character", character);
-        model.addAttribute("videoPath", filePathUtils.getCharVidPath(character.getName()));
-        model.addAttribute("audPath", filePathUtils.getCharAudPath(character.getName()));
+        model.addAttribute("videoPath", filePathUtils.getCharPathVid(character.getName()));
+        model.addAttribute("audPath", filePathUtils.getCharPathAud(character.getName()));
 
         if (passedOneHour()) {
             model.addAttribute("passedHour", true);
@@ -108,9 +122,9 @@ public class CharacterService {
         }
 
         Path path = Paths.get(filePathUtils.getCharAbsPath() + "/" + character.getName());
-        Path pathImg = Paths.get(filePathUtils.getCharImgAbsPath(character.getName()));
-        Path pathAud = Paths.get(filePathUtils.getCharAudAbsPath(character.getName()));
-        Path pathVid = Paths.get(filePathUtils.getCharVidAbsPath(character.getName()));
+        Path pathImg = Paths.get(filePathUtils.getCharAbsPathImg(character.getName()));
+        Path pathAud = Paths.get(filePathUtils.getCharAbsPathAud(character.getName()));
+        Path pathVid = Paths.get(filePathUtils.getCharAbsPathVid(character.getName()));
 
         try {
             if (!Files.exists(path)) {
@@ -182,21 +196,21 @@ public class CharacterService {
 
         try {
             if (!img.isEmpty()) {
-                Path path = Paths.get(filePathUtils.getCharImgAbsPath(changingChar.getName()) + "/" + changingChar.getImageName());
+                Path path = Paths.get(filePathUtils.getCharAbsPathImg(changingChar.getName()) + "/" + changingChar.getImageName());
                 Files.delete(path);
-                img.transferTo(new File(filePathUtils.getCharImgAbsPath(changingChar.getName()) + "/" + img.getOriginalFilename()));
+                img.transferTo(new File(filePathUtils.getCharAbsPathImg(changingChar.getName()) + "/" + img.getOriginalFilename()));
                 character.setImageName(img.getOriginalFilename());
             }
             if (!aud.isEmpty()) {
-                Path path = Paths.get(filePathUtils.getCharAudAbsPath(changingChar.getName()) + "/" + changingChar.getAudioName());
+                Path path = Paths.get(filePathUtils.getCharAbsPathAud(changingChar.getName()) + "/" + changingChar.getAudioName());
                 Files.delete(path);
-                aud.transferTo(new File(filePathUtils.getCharAudAbsPath(changingChar.getName()) + "/" + aud.getOriginalFilename()));
+                aud.transferTo(new File(filePathUtils.getCharAbsPathAud(changingChar.getName()) + "/" + aud.getOriginalFilename()));
                 character.setAudioName(aud.getOriginalFilename());
             }
             if (!vid.isEmpty()) {
-                Path path = Paths.get(filePathUtils.getCharVidAbsPath(changingChar.getName()) + "/" + changingChar.getVideoName());
+                Path path = Paths.get(filePathUtils.getCharAbsPathVid(changingChar.getName()) + "/" + changingChar.getVideoName());
                 Files.delete(path);
-                vid.transferTo(new File(filePathUtils.getCharVidAbsPath(changingChar.getName()) + "/" + vid.getOriginalFilename()));
+                vid.transferTo(new File(filePathUtils.getCharAbsPathVid(changingChar.getName()) + "/" + vid.getOriginalFilename()));
                 character.setVideoName(vid.getOriginalFilename());
             }
         } catch (IOException e) {
@@ -213,9 +227,9 @@ public class CharacterService {
     public String deleteCharacter(@PathVariable(name = "id") Long charId) {
         Character character = charRepository.findById(charId).orElseThrow();
 
-        Path pathImg = Paths.get(filePathUtils.getCharImgAbsPath(character.getName()) + "/" + character.getImageName());
-        Path pathAud = Paths.get(filePathUtils.getCharAudAbsPath(character.getName()) + "/" + character.getAudioName());
-        Path pathVid = Paths.get(filePathUtils.getCharVidAbsPath(character.getName()) + "/" + character.getVideoName());
+        Path pathImg = Paths.get(filePathUtils.getCharAbsPathImg(character.getName()) + "/" + character.getImageName());
+        Path pathAud = Paths.get(filePathUtils.getCharAbsPathAud(character.getName()) + "/" + character.getAudioName());
+        Path pathVid = Paths.get(filePathUtils.getCharAbsPathVid(character.getName()) + "/" + character.getVideoName());
 
         try {
             Files.delete(pathImg);
@@ -234,5 +248,26 @@ public class CharacterService {
         for(Character request : charRepository.findAllByOriginalId(id)){
             requestService.requestDisapproved(request.getId());
         }
+    }
+
+    public Resource downloadCharacter(@PathVariable Long id, Principal principal) throws IOException {
+        Users user = userRepository.findByUsername(principal.getName());
+        user.setDownloads(user.getDownloads() - 1);
+        userRepository.save(user);
+
+        Character character = charRepository.findById(id).orElseThrow();
+        String sourceFile = filePathUtils.getCharAbsPath(character.getName());
+
+        FileOutputStream fos = new FileOutputStream("myzip.zip");
+        ZipOutputStream zipOut = new ZipOutputStream(fos);
+
+        File fileToZip = new File(sourceFile);
+        zipFile(fileToZip, fileToZip.getName(), zipOut);
+        zipOut.close();
+        fos.close();
+
+        File zip = new File("myzip.zip");
+        Path path = Paths.get(zip.getAbsolutePath());
+        return new UrlResource(path.toUri());
     }
 }

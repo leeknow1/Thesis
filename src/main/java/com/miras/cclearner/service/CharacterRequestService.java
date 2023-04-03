@@ -24,7 +24,6 @@ import java.security.Principal;
 import java.util.List;
 
 import static com.miras.cclearner.service.ServiceUtils.getFormattedDate;
-import static com.miras.cclearner.service.ServiceUtils.splitString;
 import static com.miras.cclearner.service.ServiceUtils.getRequestName;
 
 @Service
@@ -41,10 +40,15 @@ public class CharacterRequestService {
 
     public String getRequestCharacters(Model model) {
         List<Character> characters = charRepository.findAllModified();
-        model.addAttribute("character", characters);
 
-        if(characters.size() != 0)
-            model.addAttribute("path", filePathUtils.getCharRequestPath());
+        if(characters.size() != 0) {
+            for (Character character : characters) {
+                character.setName(getRequestName(character.getName()));
+            }
+            model.addAttribute("path", filePathUtils.getRequestPath());
+        }
+
+        model.addAttribute("character", characters);
 
         return "request/allCharsRequest";
     }
@@ -54,7 +58,7 @@ public class CharacterRequestService {
         model.addAttribute("character", characters);
 
         if(characters.size() != 0)
-            model.addAttribute("path", filePathUtils.getCharRequestPath());
+            model.addAttribute("path", filePathUtils.getRequestPath());
 
         return "request/allCharsRequest";
     }
@@ -65,8 +69,8 @@ public class CharacterRequestService {
         String name = getRequestName(character.getName());
 
         model.addAttribute("character", character);
-        model.addAttribute("videoPath", filePathUtils.getCharRequestVidPath(name));
-        model.addAttribute("audPath", filePathUtils.getCharRequestAudPath(name));
+        model.addAttribute("videoPath", filePathUtils.getRequestPathVid(name));
+        model.addAttribute("audPath", filePathUtils.getRequestPathAud(name));
 
         return "request/oneRequestChar";
     }
@@ -107,10 +111,10 @@ public class CharacterRequestService {
             return requestAddCharacter(character, model);
         }
 
-        Path path = Paths.get(filePathUtils.getCharAbsRequestPath() + "/" + character.getName());
-        Path pathImg = Paths.get(filePathUtils.getCharAbsRequestImgPath(character.getName()));
-        Path pathAud = Paths.get(filePathUtils.getCharAbsRequestAudPath(character.getName()));
-        Path pathVid = Paths.get(filePathUtils.getCharAbsRequestVidPath(character.getName()));
+        Path path = Paths.get(filePathUtils.getRequestAbsPath(character.getName()));
+        Path pathImg = Paths.get(filePathUtils.getRequestAbsPathImg(character.getName()));
+        Path pathAud = Paths.get(filePathUtils.getRequestAbsPathAud(character.getName()));
+        Path pathVid = Paths.get(filePathUtils.getRequestAbsPathVid(character.getName()));
 
         try {
             if (!Files.exists(path)) {
@@ -202,9 +206,16 @@ public class CharacterRequestService {
         Character requestChar = new Character();
         requestChar.setAuthor(user.getUsername());
         requestChar.setOriginalId(originalChar.getId());
-        requestChar.setName(originalChar.getName() + " --> " + character.getName());
-        requestChar.setDescription(originalChar.getDescription() + " --> " + character.getDescription());
-        requestChar.setExample(originalChar.getExample() + " --> " + character.getExample());
+
+        if(!originalChar.getName().equals(character.getName()))
+            requestChar.setName(originalChar.getName() + " --> " + character.getName());
+
+        if(!originalChar.getDescription().equals(character.getDescription()))
+            requestChar.setDescription(originalChar.getDescription() + " --> " + character.getDescription());
+
+        if(!originalChar.getExample().equals(character.getExample()))
+            requestChar.setExample(originalChar.getExample() + " --> " + character.getExample());
+
         requestChar.setUpdatedDate(getFormattedDate());
         requestChar.setLikes(0);
         requestChar.setDislikes(0);
@@ -215,10 +226,10 @@ public class CharacterRequestService {
         requestChar.setAudioName(null);
         requestChar.setVideoName(null);
 
-        Path path = Paths.get(filePathUtils.getCharAbsRequestPath() + "/" + originalChar.getName());
-        Path pathImg = Paths.get(filePathUtils.getCharAbsRequestImgPath(originalChar.getName()));
-        Path pathAud = Paths.get(filePathUtils.getCharAbsRequestAudPath(originalChar.getName()));
-        Path pathVid = Paths.get(filePathUtils.getCharAbsRequestVidPath(originalChar.getName()));
+        Path path = Paths.get(filePathUtils.getRequestAbsPath(character.getName()));
+        Path pathImg = Paths.get(filePathUtils.getRequestAbsPathImg(originalChar.getName()));
+        Path pathAud = Paths.get(filePathUtils.getRequestAbsPathAud(originalChar.getName()));
+        Path pathVid = Paths.get(filePathUtils.getRequestAbsPathVid(originalChar.getName()));
 
         try {
             if (!Files.exists(path)) {
@@ -260,39 +271,39 @@ public class CharacterRequestService {
             Character character = charRepository.findById(request.getOriginalId()).orElseThrow();
             try {
                 if (request.getImageName() != null) {
-                    Path oldImg = Paths.get(filePathUtils.getCharImgAbsPath(character.getName()) + "/" + character.getImageName());
+                    Path oldImg = Paths.get(filePathUtils.getCharAbsPathImg(character.getName()) + "/" + character.getImageName());
                     Files.delete(oldImg);
-                    Path from = Paths.get(filePathUtils.getCharAbsRequestImgPath(character.getName()) + "/" + request.getImageName());
-                    Path to = Paths.get(filePathUtils.getCharImgAbsPath(character.getName()) + "/" + request.getImageName());
+                    Path from = Paths.get(filePathUtils.getRequestAbsPathImg(character.getName()) + "/" + request.getImageName());
+                    Path to = Paths.get(filePathUtils.getCharAbsPathImg(character.getName()) + "/" + request.getImageName());
                     Files.move(from, to);
                     character.setImageName(request.getImageName());
                 }
                 if (request.getAudioName() != null) {
-                    Path oldAud = Paths.get(filePathUtils.getCharAudAbsPath(character.getName()) + "/" + character.getAudioName());
+                    Path oldAud = Paths.get(filePathUtils.getCharAbsPathAud(character.getName()) + "/" + character.getAudioName());
                     Files.delete(oldAud);
-                    Path from = Paths.get(filePathUtils.getCharAbsRequestAudPath(character.getName()) + "/" + request.getAudioName());
-                    Path to = Paths.get(filePathUtils.getCharAudAbsPath(character.getName()) + "/" + request.getAudioName());
+                    Path from = Paths.get(filePathUtils.getRequestAbsPathAud(character.getName()) + "/" + request.getAudioName());
+                    Path to = Paths.get(filePathUtils.getCharAbsPathAud(character.getName()) + "/" + request.getAudioName());
                     Files.move(from, to);
                     character.setAudioName(request.getAudioName());
                 }
                 if (request.getVideoName() != null) {
-                    Path oldVid = Paths.get(filePathUtils.getCharVidAbsPath(character.getName()) + "/" + character.getVideoName());
+                    Path oldVid = Paths.get(filePathUtils.getCharAbsPathVid(character.getName()) + "/" + character.getVideoName());
                     Files.delete(oldVid);
-                    Path from = Paths.get(filePathUtils.getCharAbsRequestVidPath(character.getName()) + "/" + request.getVideoName());
-                    Path to = Paths.get(filePathUtils.getCharVidAbsPath(character.getName()) + "/" + request.getVideoName());
+                    Path from = Paths.get(filePathUtils.getRequestAbsPathVid(character.getName()) + "/" + request.getVideoName());
+                    Path to = Paths.get(filePathUtils.getCharAbsPathVid(character.getName()) + "/" + request.getVideoName());
                     Files.move(from, to);
                     character.setVideoName(request.getVideoName());
                 }
                 File oldDirName = new File(filePathUtils.getCharAbsPath(character.getName()));
-                File newDirName = new File(filePathUtils.getCharAbsPath(splitString(request.getName())));
+                File newDirName = new File(filePathUtils.getCharAbsPath(getRequestName(request.getName())));
                 oldDirName.renameTo(newDirName);
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            character.setName(splitString(request.getName()));
-            character.setDescription(splitString(request.getDescription()));
-            character.setExample(splitString(request.getExample()));
+            character.setName(getRequestName(request.getName()));
+            character.setDescription(getRequestName(request.getDescription()));
+            character.setExample(getRequestName(request.getExample()));
             character.setAuthor(request.getAuthor());
             character.setUpdatedDate(getFormattedDate());
             character.setCategory(request.getCategory());
@@ -305,9 +316,9 @@ public class CharacterRequestService {
             request.setUpdatedDate(getFormattedDate());
 
             Path path = Paths.get(filePathUtils.getCharAbsPath() + "/" + request.getName());
-            Path pathImg = Paths.get(filePathUtils.getCharImgAbsPath(request.getName()));
-            Path pathAud = Paths.get(filePathUtils.getCharAudAbsPath(request.getName()));
-            Path pathVid = Paths.get(filePathUtils.getCharVidAbsPath(request.getName()));
+            Path pathImg = Paths.get(filePathUtils.getCharAbsPathImg(request.getName()));
+            Path pathAud = Paths.get(filePathUtils.getCharAbsPathAud(request.getName()));
+            Path pathVid = Paths.get(filePathUtils.getCharAbsPathVid(request.getName()));
 
             try {
                 if (!Files.exists(path)) {
@@ -322,18 +333,18 @@ public class CharacterRequestService {
 
             try {
                 if (request.getImageName() != null) {
-                    Path from = Paths.get(filePathUtils.getCharAbsRequestImgPath(request.getName()) + "/" + request.getImageName());
-                    Path to = Paths.get(filePathUtils.getCharImgAbsPath(request.getName()) + "/" + request.getImageName());
+                    Path from = Paths.get(filePathUtils.getRequestAbsPathImg(request.getName()) + "/" + request.getImageName());
+                    Path to = Paths.get(filePathUtils.getCharAbsPathImg(request.getName()) + "/" + request.getImageName());
                     Files.move(from, to);
                 }
                 if (request.getAudioName() != null) {
-                    Path from = Paths.get(filePathUtils.getCharAbsRequestAudPath(request.getName()) + "/" + request.getAudioName());
-                    Path to = Paths.get(filePathUtils.getCharAudAbsPath(request.getName()) + "/" + request.getAudioName());
+                    Path from = Paths.get(filePathUtils.getRequestAbsPathAud(request.getName()) + "/" + request.getAudioName());
+                    Path to = Paths.get(filePathUtils.getCharAbsPathAud(request.getName()) + "/" + request.getAudioName());
                     Files.move(from, to);
                 }
                 if (request.getVideoName() != null) {
-                    Path from = Paths.get(filePathUtils.getCharAbsRequestVidPath(request.getName()) + "/" + request.getVideoName());
-                    Path to = Paths.get(filePathUtils.getCharVidAbsPath(request.getName()) + "/" + request.getVideoName());
+                    Path from = Paths.get(filePathUtils.getRequestAbsPathVid(request.getName()) + "/" + request.getVideoName());
+                    Path to = Paths.get(filePathUtils.getCharAbsPathVid(request.getName()) + "/" + request.getVideoName());
                     Files.move(from, to);
                 }
             } catch (IOException e) {
@@ -359,15 +370,15 @@ public class CharacterRequestService {
 
         try {
             if (request.getImageName() != null) {
-                Path pathImgRequest = Paths.get(filePathUtils.getCharAbsRequestImgPath(name) + "/" + request.getImageName());
+                Path pathImgRequest = Paths.get(filePathUtils.getRequestAbsPathImg(name) + "/" + request.getImageName());
                 Files.delete(pathImgRequest);
             }
             if (request.getAudioName() != null) {
-                Path pathAudRequest = Paths.get(filePathUtils.getCharAbsRequestAudPath(name) + "/" + request.getAudioName());
+                Path pathAudRequest = Paths.get(filePathUtils.getRequestAbsPathAud(name) + "/" + request.getAudioName());
                 Files.delete(pathAudRequest);
             }
             if (request.getVideoName() != null) {
-                Path pathVidRequest = Paths.get(filePathUtils.getCharAbsRequestVidPath(name) + "/" + request.getVideoName());
+                Path pathVidRequest = Paths.get(filePathUtils.getRequestAbsPathVid(name) + "/" + request.getVideoName());
                 Files.delete(pathVidRequest);
             }
 

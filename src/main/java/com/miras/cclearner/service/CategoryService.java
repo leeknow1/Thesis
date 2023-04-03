@@ -95,7 +95,7 @@ public class CategoryService {
     }
 
     public String editCharCategory(@PathVariable(name = "category") Long cateId, Model model) {
-        model.addAttribute("categoryObj", categoryRepository.findById(cateId).get());
+        model.addAttribute("categoryObj", categoryRepository.findById(cateId).orElseThrow());
         return "editCharCategory";
     }
 
@@ -104,7 +104,7 @@ public class CategoryService {
             return editCharCategory(cateId, model);
         }
 
-        Category changingCategory = categoryRepository.findById(cateId).get();
+        Category changingCategory = categoryRepository.findById(cateId).orElseThrow();
 
         if (!changingCategory.getName().equals(category.getName())) {
             File oldDirName = new File(filePathUtils.getCategoryAbsPath(changingCategory.getName()));
@@ -131,7 +131,7 @@ public class CategoryService {
     }
 
     public String deleteCategory(Long cateId) {
-        Category category = categoryRepository.findById(cateId).get();
+        Category category = categoryRepository.findById(cateId).orElseThrow();
         try{
             Path path = Paths.get(filePathUtils.getCategoryAbsPath(category.getName()));
             Path pathImg = Paths.get(filePathUtils.getCategoryAbsPath(category.getName()) + "/" + category.getImgName());

@@ -6,114 +6,108 @@ import org.springframework.stereotype.Service;
 @Service
 public class FilePathUtils {
 
-    @Value("${files.char.path}")
-    private String charPath;
+    private final String charPath = "/characters/";
 
-    @Value("${file.char.abs.path}")
+    private final String categoryPath = "/categories/";
+
+    private final String requestPath = "/requests/";
+
+    @Value("${files.char.path}")
     private String charAbsPath;
 
-    @Value("${files.request.char.path}")
-    private String charRequestPath;
-
-    @Value("${file.request.char.abs.path}")
-    private String charAbsRequestPath;
-
-    @Value("${file.category.path}")
-    private String categoryPath;
-
-    @Value("${file.category.abs.path}")
+    @Value("${files.category.path}")
     private String categoryAbsPath;
+
+    @Value("${files.request.path}")
+    private String requestAbsPath;
+
+    public String getCharPath() {
+        return charPath;
+    }
 
     public String getCategoryPath() {
         return categoryPath;
+    }
+
+    public String getRequestPath() {
+        return requestPath;
+    }
+
+    //ABSOLUTE PATH
+
+    public String getCharAbsPath() {
+        return charAbsPath;
     }
 
     public String getCategoryAbsPath() {
         return categoryAbsPath;
     }
 
-    public String getCategoryPath(String name) {
-        return categoryPath + "/" + name;
-    }
-
-    public String getCategoryAbsPath(String name) {
-        return categoryAbsPath + "/" + name;
-    }
-
-    public String getCharPath() {
-        return charPath;
-    }
-
-    public String getCharCategoryPath(String categoryName) {
-        return charPath + "/" + categoryName;
-    }
-
-
-    public String getCharImgPath(String categoryName) {
-        return charPath + "/" + categoryName + "/img";
-    }
-
-    public String getCharVidPath(String categoryName) {
-        return charPath + "/" + categoryName + "/vid";
-    }
-
-    public String getCharAudPath(String categoryName) {
-        return charPath + "/" + categoryName + "/aud";
-    }
-
-    public String getCharAbsPath() {
-        return charAbsPath;
+    public String getRequestAbsPath() {
+        return requestAbsPath;
     }
 
     public String getCharAbsPath(String name) {
-        return charAbsPath + "/" + name;
+        return charAbsPath + name;
     }
 
-    public String getCharImgAbsPath(String name) {
-        return charAbsPath + "/" + name + "/img";
+    public String getCategoryAbsPath(String name) {
+        return categoryAbsPath + name;
     }
 
-    public String getCharVidAbsPath(String name) {
-        return charAbsPath + "/" + name + "/vid";
+    public String getRequestAbsPath(String name) {
+        return requestAbsPath + name;
     }
 
-    public String getCharAudAbsPath(String name) {
-        return charAbsPath + "/" + name + "/aud";
+    //CHARACTER
+
+    public String getCharPathImg(String name) {
+        return charPath + name + "/img";
     }
 
-        /*
-        REQUEST PATHS
-         */
-
-    public String getCharRequestPath() {
-        return charRequestPath;
+    public String getCharPathAud(String name) {
+        return charPath + name + "/aud";
     }
 
-    public String getCharRequestImgPath(String name) {
-        return charRequestPath + "/" + name + "/img";
+    public String getCharPathVid(String name) {
+        return charPath + name + "/vid";
     }
 
-    public String getCharRequestAudPath(String name) {
-        return charRequestPath + "/" + name + "/aud";
+    public String getCharAbsPathImg(String name) {
+        return charAbsPath + name + "/img";
     }
 
-    public String getCharRequestVidPath(String name) {
-        return charRequestPath + "/" + name + "/vid";
+    public String getCharAbsPathAud(String name) {
+        return charAbsPath + name + "/aud";
     }
 
-    public String getCharAbsRequestPath() {
-        return charAbsRequestPath;
+    public String getCharAbsPathVid(String name) {
+        return charAbsPath + name + "/vid";
     }
 
-    public String getCharAbsRequestImgPath(String name) {
-        return charAbsRequestPath + "/" + name + "/img";
+    //REQUEST
+
+    public String getRequestPathImg(String name) {
+        return requestPath + name + "/img";
     }
 
-    public String getCharAbsRequestAudPath(String name) {
-        return charAbsRequestPath + "/" + name + "/aud";
+    public String getRequestPathAud(String name) {
+        return requestPath + name + "/aud";
     }
 
-    public String getCharAbsRequestVidPath(String name) {
-        return charAbsRequestPath + "/" + name + "/vid";
+    public String getRequestPathVid(String name) {
+        return requestPath + name + "/vid";
+    }
+
+    public String getRequestAbsPathImg(String name) {
+        return requestAbsPath + name + "/img";
+    }
+
+    public String getRequestAbsPathAud(String name) {
+        return requestAbsPath + name + "/aud";
+    }
+
+    public String getRequestAbsPathVid(String name) {
+        return requestAbsPath + name + "/vid";
     }
 }

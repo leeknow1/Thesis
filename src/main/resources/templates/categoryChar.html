@@ -30,12 +30,12 @@
                 to add</a>
         </div>
 
-
+        <div th:if="${category.size() != 0}">
             <div class="album py-2">
                 <div class="row">
                     <div class="col-4 my-2 text-center" th:each="el : ${category}">
                         <div class="card shadow-sm">
-                            <img th:src=" @{ ${path} + '/' + ${el.getName()} + '/' + ${el.getImgName()} } "
+                            <img th:src=" @{ ${path} + ${el.getName()} + '/' + ${el.getImgName()} } "
                                  class="card-img-top" width="100%" height="225" alt="home_char_img">
                             <div class="card-body">
                                 <p class="card-text" th:text="${el.getName()}"></p>
@@ -53,13 +53,14 @@
                     </div>
                 </div>
             </div>
+        </div>
 
         <div th:if="${character.size() != 0}">
             <div class="album py-2">
                 <div class="row">
                     <div class="col-4 my-2 text-center" th:each="el : ${character}">
                         <div class="card shadow-sm">
-                            <img th:src=" @{ ${path} + '/' + ${el.getName()} + '/img/' + ${el.getImageName()} } " class="card-img-top"
+                            <img th:src=" @{ ${path} + ${el.getName()} + '/img/' + ${el.getImageName()} } " class="card-img-top"
                                  width="100%" height="225" alt="home_char_img">
                             <div class="card-body">
                                 <p class="card-text" th:text="${el.getName()}"></p>

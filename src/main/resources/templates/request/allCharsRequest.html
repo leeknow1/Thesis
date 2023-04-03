@@ -36,7 +36,7 @@
                     <div class="col-4 my-2 text-center" th:each="el : ${character}">
                         <div class="card shadow-sm">
                             <div th:if="${el.getImageName() != null}">
-                                <img th:src=" @{ ${path} + '/' + ${el.getName()} + '/img/' + ${el.getImageName()} } " class="card-img-top"
+                                <img th:src=" @{ ${path} + ${el.getName()} + '/img/' + ${el.getImageName()} } " class="card-img-top"
                                      width="100%" height="225" alt="request_char_img">
                             </div>
                             <div th:if="${el.getImageName() == null}">

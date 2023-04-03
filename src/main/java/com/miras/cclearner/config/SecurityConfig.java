@@ -35,6 +35,8 @@ public class SecurityConfig {
                 .requestMatchers("/content/**", "/requests/**").permitAll()
                 .requestMatchers("/api/characters/user/**", "/api/category/user/**").permitAll()
 
+                .requestMatchers("/categories/**", "/characters/**", "/requests/**").permitAll()
+
                 .requestMatchers("/api/characters/admin/**").hasAnyAuthority("ADMIN", "MANAGER")
                 .requestMatchers("/api/admin/users/**").hasAuthority("ADMIN")
 
@@ -42,6 +44,7 @@ public class SecurityConfig {
 
                 .requestMatchers("/api/characters/request/**").authenticated()
                 .requestMatchers("/api/characters/mine").authenticated()
+                .requestMatchers("/api/characters/download/**").authenticated()
 
                 .requestMatchers("/api/feedback", "/api/feedback/reply/**", "/api/feedback/add").authenticated()
                 .requestMatchers("/api/feedback/admin/**").hasAuthority("ADMIN")
