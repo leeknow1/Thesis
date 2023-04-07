@@ -83,7 +83,7 @@ public class UserService {
         return "redirect:/api/admin/users";
     }
 
-    List<Integer> getThreePages(int currentPage , int totalPages){
+    private List<Integer> getThreePages(int currentPage , int totalPages){
         List<Integer> threePages = new ArrayList<>();
 
         if(currentPage == 1) {

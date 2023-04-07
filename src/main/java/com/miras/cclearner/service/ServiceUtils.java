@@ -26,7 +26,7 @@ public class ServiceUtils {
     }
 
     public static String getRequestName(String name){
-        if(name.contains("-->")){
+        if(name != null && name.contains("-->")){
             return splitString(name);
         }
         return name;

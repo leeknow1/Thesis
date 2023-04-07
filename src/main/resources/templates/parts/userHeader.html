@@ -8,7 +8,7 @@
                         <a class="nav-link" href="/api/characters/mine">My Characters</a>
                     </li>
                     <form class="d-flex" role="search" method="get" style="margin-left: 15px">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="user">
+                        <input class="form-control me-2" type="search" placeholder="Username" aria-label="Search" name="user">
                         <button class="btn btn-outline-success" type="submit">Search</button>
                     </form>
                     <li th:if="${passedHour}" sec:authorize="anonymous" class="nav-item mx-5">

@@ -47,7 +47,7 @@ public class FeedbackService {
     public String replyToFeedback(@ModelAttribute("feedback") Feedback feedback,
                                   @PathVariable Long id,
                                   Model model) {
-        Feedback reply = feedbackRepository.findById(id).get();
+        Feedback reply = feedbackRepository.findById(id).orElseThrow();
         model.addAttribute("username", reply.getUsername());
         model.addAttribute("replyMessage", reply.getMessage());
         return "replyToFeedback";
@@ -60,7 +60,7 @@ public class FeedbackService {
         Feedback newFeedback = new Feedback();
         newFeedback.setUsername(principal.getName());
         newFeedback.setCreatedDate(new Timestamp(System.currentTimeMillis()));
-        String message = "@" + feedbackRepository.findById(id).get().getUsername() + ", " + feedback.getMessage();
+        String message = "@" + feedbackRepository.findById(id).orElseThrow().getUsername() + ", " + feedback.getMessage();
         newFeedback.setMessage(message);
 
         feedbackRepository.save(newFeedback);

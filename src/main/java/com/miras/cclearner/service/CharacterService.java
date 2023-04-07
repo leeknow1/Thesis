@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -178,21 +177,18 @@ public class CharacterService {
         }
 
         Character changingChar = charRepository.findById(charId).orElseThrow();
-        character.setStatus(changingChar.getStatus());
-        character.setImageName(changingChar.getImageName());
-        character.setAudioName(changingChar.getAudioName());
-        character.setVideoName(changingChar.getVideoName());
 
         if (!changingChar.getName().equals(character.getName())) {
             if (customValidator.checkName(character.getName())) {
                 model.addAttribute("isNameInvalid", true);
                 return editCharacter(charId, model);
             }
-
-            File oldDirName = new File(filePathUtils.getCharAbsPath(changingChar.getName()));
-            File newDirName = new File(filePathUtils.getCharAbsPath(character.getName()));
-            oldDirName.renameTo(newDirName);
         }
+
+        character.setStatus(changingChar.getStatus());
+        character.setImageName(changingChar.getImageName());
+        character.setAudioName(changingChar.getAudioName());
+        character.setVideoName(changingChar.getVideoName());
 
         try {
             if (!img.isEmpty()) {
@@ -216,6 +212,10 @@ public class CharacterService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        File oldDirName = new File(filePathUtils.getCharAbsPath(changingChar.getName()));
+        File newDirName = new File(filePathUtils.getCharAbsPath(character.getName()));
+        oldDirName.renameTo(newDirName);
 
         character.setAuthor(principal.getName());
         character.setUpdatedDate(getFormattedDate());

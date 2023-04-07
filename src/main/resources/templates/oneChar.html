@@ -18,13 +18,13 @@
     <main>
         <div th:object="${character}">
             <div class="ratio ratio-16x9">
-                <video width="800" height="500" controls>
+                <video width="800" height="500" controls controlslist="nodownload">
                     <source th:src="@{ ${videoPath} + '/' + ${character.getVideoName()} }" type="video/mp4">
                 </video>
             </div>
             <br>
             <p class="h4">Pronunciation:</p>
-            <audio controls>
+            <audio controls controlslist="nodownload">
                 <source th:src="@{ ${audPath} + '/' + ${character.getAudioName()} }" type="audio/mpeg">
             </audio>
             <h1>Character Name:</h1>

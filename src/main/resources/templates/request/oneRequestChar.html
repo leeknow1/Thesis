@@ -20,7 +20,7 @@
         <div th:object="${character}">
 
             <div th:if="${character.getVideoName() !=null}" class="ratio ratio-16x9">
-                <video width="800" height="500" controls>
+                <video width="800" height="500" controls controlslist="nodownload">
                     <source th:src="@{ ${videoPath} + '/' + ${character.getVideoName()} }" type="video/mp4">
                 </video>
             </div>
@@ -32,7 +32,7 @@
             <p>Pronunciation:</p>
 
             <div th:if="${character.getAudioName() != null}">
-                <audio controls>
+                <audio controls controlslist="nodownload">
                     <source th:src="@{ ${audPath} + '/' + ${character.getAudioName()} }" type="audio/mpeg">
                 </audio>
             </div>

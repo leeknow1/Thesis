@@ -31,6 +31,7 @@
             <div class="mb-3 w-50">
                 <label for="cName" class="form-label">Name</label>
                 <input class="form-control mb-3" type="text" placeholder="Character name" id="cName" th:field="*{name}">
+                <small style="color: red" th:if="${isNameInvalid}">Category with this name already exist!</small><br>
             </div>
 
             <div class="mb-3 w-75">

@@ -24,7 +24,7 @@ public class CharacterRequestController {
     }
 
     @GetMapping("/request/mine")
-    public String getUserRequestCharacters(Principal principal, Model model){
+    public String getUserRequestCharacters(Principal principal, Model model) {
         return service.getUserRequestCharacters(principal, model);
     }
 

@@ -107,6 +107,11 @@ public class CategoryService {
         Category changingCategory = categoryRepository.findById(cateId).orElseThrow();
 
         if (!changingCategory.getName().equals(category.getName())) {
+            if (customValidator.checkCharCategoryName(category.getName())) {
+                model.addAttribute("isNameInvalid", true);
+                return editCharCategory(cateId, model);
+            }
+
             File oldDirName = new File(filePathUtils.getCategoryAbsPath(changingCategory.getName()));
             File newDirName = new File(filePathUtils.getCategoryAbsPath(category.getName()));
             oldDirName.renameTo(newDirName);
