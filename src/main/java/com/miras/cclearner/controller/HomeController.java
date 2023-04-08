@@ -70,6 +70,16 @@ public class HomeController {
         return service.registration(user, model);
     }
 
+    @GetMapping("/check-email")
+    public String checkEmail(@ModelAttribute("user") Users user){
+        return service.checkEmail(user);
+    }
+
+    @PostMapping("/check-email")
+    public String checkEmail(@ModelAttribute("user") Users user, Model model){
+        return service.checkEmail(user, model);
+    }
+
     @GetMapping("/refresh-password")
     public String refreshPassword(@ModelAttribute("user") Users user){
         return service.refreshPassword(user);

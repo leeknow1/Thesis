@@ -38,4 +38,7 @@ public class Users {
 
     @Column(name = "downloads")
     private Integer downloads = 10;
+
+    @Column(name = "reset_code")
+    private Integer resetCode;
 }

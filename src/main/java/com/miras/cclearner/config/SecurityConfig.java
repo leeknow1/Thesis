@@ -31,7 +31,8 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
 
-                .requestMatchers("/api/home", "/api/registration", "/api/refresh-password").permitAll()
+                .requestMatchers("/api/home", "/api/registration").permitAll()
+                .requestMatchers("/api/check-email", "/api/reset-code", "/api/refresh-password").permitAll()
                 .requestMatchers("/content/**", "/requests/**").permitAll()
                 .requestMatchers("/api/characters/user/**", "/api/category/user/**").permitAll()
 
