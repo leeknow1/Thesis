@@ -49,6 +49,8 @@ public class UserService {
         UserDTO userDTO = new UserDTO();
         userDTO.setEmail(user.getEmail());
         userDTO.setUsername(user.getUsername());
+        userDTO.setDownloads(user.getDownloads());
+        userDTO.setPoints(user.getPoints());
         model.addAttribute("user", userDTO);
         return "editUser";
     }
@@ -67,6 +69,8 @@ public class UserService {
         }
 
         user.setUsername(userDTO.getUsername());
+        user.setDownloads(userDTO.getDownloads());
+        user.setPoints(userDTO.getPoints());
         if (userDTO.getRoleID() == null)
             userDTO.setRoleID("2");
 

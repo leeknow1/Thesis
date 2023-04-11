@@ -22,6 +22,10 @@
     <label for="username" class="form-label">Username</label>
     <input type="text" class="form-control" id="username" th:field="*{username}" placeholder="Username" required>
     <small style="color: red" class="mt-1 mb-3" th:if="${messageUsername}">User with this username already exist!</small>
+    <label for="points" class="form-label">Points</label>
+    <input type="number" class="form-control" id="points" th:field="*{points}" placeholder="Points" required>
+    <label for="downloads" class="form-label">Downloads</label>
+    <input type="number" class="form-control" id="downloads" th:field="*{downloads}" placeholder="Downloads" required>
   </div>
   <div class="mb-3">
     <label for="password" class="form-label">New Password</label>

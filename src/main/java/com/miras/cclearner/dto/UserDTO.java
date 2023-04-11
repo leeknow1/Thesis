@@ -9,4 +9,6 @@ public class UserDTO {
     private String username;
     private String password;
     private String roleID;
+    private Integer points;
+    private Integer downloads;
 }
