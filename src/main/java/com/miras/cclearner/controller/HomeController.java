@@ -14,6 +14,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import static com.miras.cclearner.CclearnerApplication.resetTimer;
+
 @Controller
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -27,6 +29,12 @@ public class HomeController {
     @GetMapping("/home")
     public String getCategories(@RequestParam(required = false, defaultValue = "", value = "name") String name, Model model) {
         return categoryService.getCategories(name, model);
+    }
+
+    @GetMapping("/home/reset-timer")
+    public String resetTime(Model model){
+        resetTimer();
+        return categoryService.getCategories("", model);
     }
 
     @GetMapping("/category/user/{category}")

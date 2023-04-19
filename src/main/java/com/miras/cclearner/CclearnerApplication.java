@@ -8,7 +8,7 @@ import java.util.Date;
 @SpringBootApplication
 public class CclearnerApplication {
 
-    private static final Date afterOneHour = new Date(System.currentTimeMillis() + 3600000);
+    private static Date afterOneHour = new Date(System.currentTimeMillis() + 3600000);
 
     public static void main(String[] args) {
         SpringApplication.run(CclearnerApplication.class, args);
@@ -16,6 +16,10 @@ public class CclearnerApplication {
 
     public static boolean passedOneHour() {
         return new Date().after(afterOneHour);
+    }
+
+    public static void resetTimer(){
+        afterOneHour = new Date(System.currentTimeMillis() + 3600000);
     }
 
 }

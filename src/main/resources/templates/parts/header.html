@@ -10,6 +10,11 @@
                     <li th:if="${passedHour}" sec:authorize="anonymous" class="nav-item mx-5">
                         <h4 style="color: red">It's been more than 1 hour! Your eyes should rest now!</h4>
                     </li>
+                    <li th:if="${passedHour}" sec:authorize="anonymous" class="nav-item mx-5">
+                        <form action="/api/home/reset-timer" method="get">
+                            <button type="submit" class="btn btn-outline-warning" formmethod="get">Reset Timer!</button>
+                        </form>
+                    </li>
                 </ul>
 
                 <div sec:authorize="authenticated" style="margin-right: 15px">
