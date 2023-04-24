@@ -49,7 +49,7 @@
                                     <div class="btn-group">
                                         <a th:href="@{ '/api/characters/user/' + ${el.getId()} }"
                                            class="btn btn-sm btn-outline-primary">View</a>
-                                        <a sec:authorize="hasAnyAuthority('ADMIN', 'MANAGER')"
+                                        <a sec:authorize="hasAuthority('ADMIN')"
                                            th:href="@{ '/api/characters/admin/edit/' + ${el.getId()} }"
                                            class="btn btn-sm btn-outline-primary mx-1">Edit</a>
                                         <a sec:authorize="hasAuthority('ADULT')"

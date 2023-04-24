@@ -65,7 +65,7 @@
         </div>
 
         <br>
-        <div sec:authorize="hasAuthority('ADMIN')">
+        <div sec:authorize="hasAnyAuthority('ADMIN', 'MANAGER')">
             <a th:href="@{ '/api/characters/admin/request/approve/' + ${character.getId()} }"
                type="submit" class="btn btn-success">Approve</a>
             <a th:href="@{ '/api/characters/admin/request/disapprove/' + ${character.getId()} }"

@@ -38,7 +38,9 @@ public class SecurityConfig {
 
                 .requestMatchers("/categories/**", "/characters/**", "/requests/**").permitAll()
 
-                .requestMatchers("/api/characters/admin/**").hasAnyAuthority("ADMIN", "MANAGER")
+                .requestMatchers("/api/characters/admin/add").hasAnyAuthority("ADMIN", "MANAGER")
+                .requestMatchers("/api/characters/admin/request/**").hasAnyAuthority("ADMIN", "MANAGER")
+                .requestMatchers("/api/characters/admin/**").hasAuthority("ADMIN")
                 .requestMatchers("/api/admin/users/**").hasAuthority("ADMIN")
 
                 .requestMatchers("/api/characters/adult/**").hasAuthority("ADULT")
