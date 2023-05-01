@@ -39,7 +39,7 @@
 
             <div sec:authorize="authenticated">
                 <a th:href="@{ '/api/characters/download/' + ${character.getId()} }"
-                   type="submit" class="btn btn-outline-info" th:classappend="${notAllowedDownload} ? 'disabled'" >Download</a>
+                   type="submit" class="btn btn-outline-info" th:classappend="${notAllowedDownload} ? 'disabled'">Download</a>
                 <p th:if="${notAllowedDownload}" style="color: red">Your total download count is 0!</p>
             </div>
         </div>

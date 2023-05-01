@@ -71,6 +71,7 @@ public class UserService {
         user.setUsername(userDTO.getUsername());
         user.setDownloads(userDTO.getDownloads());
         user.setPoints(userDTO.getPoints());
+        user.setEmail(userDTO.getEmail());
         if (userDTO.getRoleID() == null)
             userDTO.setRoleID("2");
 

@@ -252,6 +252,10 @@ public class CharacterService {
 
     public Resource downloadCharacter(@PathVariable Long id, Principal principal) throws IOException {
         Users user = userRepository.findByUsername(principal.getName());
+
+        if(user.getDownloads() == 0)
+            return null;
+
         user.setDownloads(user.getDownloads() - 1);
         userRepository.save(user);
 

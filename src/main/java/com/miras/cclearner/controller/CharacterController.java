@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,10 +69,16 @@ public class CharacterController {
     }
 
     @GetMapping("/download/{id}")
-    public ResponseEntity<Resource> downloadCharacter(@PathVariable Long id, Principal principal) throws IOException {
+    public ResponseEntity<?> downloadCharacter(@PathVariable Long id, Principal principal) throws IOException {
         Resource file = characterService.downloadCharacter(id, principal);
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + file.getFilename() + "\"");
+
+        if (file == null) {
+            headers.add("Location", "/api/characters/user/" + id);
+            return new ResponseEntity<String>(headers, HttpStatus.FOUND);
+        }
+
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"");
         headers.add("Content-Type", "application/octet-stream");
         return ResponseEntity
                 .ok()

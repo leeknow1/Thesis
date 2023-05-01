@@ -55,10 +55,14 @@ public class CharacterRequestService {
 
     public String getUserRequestCharacters(Principal principal, Model model) {
         List<Character> characters = charRepository.findAllRequestByUser(principal.getName());
-        model.addAttribute("character", characters);
-
-        if (characters.size() != 0)
+        if (characters.size() != 0) {
+            for (Character character : characters) {
+                character.setName(getRequestName(character.getName()));
+            }
             model.addAttribute("path", filePathUtils.getRequestPath());
+        }
+
+        model.addAttribute("character", characters);
 
         return "request/allCharsRequest";
     }
